@@ -1,7 +1,6 @@
 package com.amalitech.utils;
 
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectPackage;
-import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
 
 import org.junit.platform.engine.TestExecutionResult;
 import org.junit.platform.launcher.Launcher;
@@ -35,10 +34,6 @@ public class CustomTestRunner {
               TestIdentifier testIdentifier, TestExecutionResult testExecutionResult) {
             if (testIdentifier.isTest()) {
               String testName = testIdentifier.getDisplayName();
-              // Remove parentheses for cleaner output if present (e.g. testName())
-              // if (testName.endsWith("()")) {
-              //     testName = testName.substring(0, testName.length() - 2);
-              // }
 
               System.out.print("Test: " + testName);
 
