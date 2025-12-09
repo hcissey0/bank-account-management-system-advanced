@@ -11,6 +11,7 @@ class TransactionTest {
   void testTransactionCreation() {
     Transaction transaction = new Transaction("ACC001", "DEPOSIT", 100.0, 200.0);
 
+    assertEquals(1, Transaction.getTransactionCounter());
     assertNotNull(transaction.getTransactionId());
     assertTrue(transaction.getTransactionId().startsWith("TXN"));
     assertEquals("ACC001", transaction.getAccountNumber());
