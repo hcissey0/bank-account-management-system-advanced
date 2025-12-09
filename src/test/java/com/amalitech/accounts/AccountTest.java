@@ -111,4 +111,38 @@ class AccountTest {
         account.setBalance(200.0);
         assertEquals(200.0, account.getBalance());
     }
+
+    @Test
+    void testGetAccountCounter() {
+        // Since accountCounter is static and incremented in constructor, 
+        // its value depends on how many Account objects have been created in the JVM.
+        // We just verify it returns a positive integer.
+        assertTrue(Account.getAccountCounter() > 0);
+    }
+
+    @Test
+    void testValidateAmountDeposit() throws BankException {
+        // Should not throw exception for valid positive amount
+        account.validateAmount(100.0, "Deposit");
+    }
+
+    @Test
+    void testValidateAmountWithdrawal() throws BankException {
+        account.deposit(200.0);
+        // Should not throw exception for valid withdrawal amount
+        account.validateAmount(100.0, "Withdrawal");
+    }
+
+    @Test
+    void testValidateAmountDepositInvalid() {
+        assertThrows(InvalidAmountException.class, () -> account.validateAmount(-50.0, "Deposit"));
+    }
+
+    @Test
+    void testValidateAmountWithdrawalInvalid() {
+        // TestAccount implementation throws if amount > balance
+        assertThrows(InvalidAmountException.class, () -> account.validateAmount(50.0, "Withdrawal"));
+    }
+
+
 }

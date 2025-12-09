@@ -28,6 +28,16 @@ class CheckingAccountTest {
     }
 
     @Test
+    void testGetMonthlyFee() {
+        assertEquals(10.0, checkingAccount.getMonthlyFee());
+    }
+
+    @Test
+    void testGetOverdraftLimit() {
+        assertEquals(1000.0, checkingAccount.getOverdraftLimit());
+    }
+
+    @Test
     void testApplyMonthlyFee() {
         checkingAccount.applyMonthlyFee();
         assertEquals(90.0, checkingAccount.getBalance());
@@ -62,6 +72,17 @@ class CheckingAccountTest {
         double result = checkingAccount.withdraw(1200.0);
         assertEquals(-1, result); // Returns -1 on failure
         assertEquals(100.0, checkingAccount.getBalance()); // Balance unchanged
+    }
+
+    @Test
+    void testDisplayAccountDetails() {
+        // Just ensure no exceptions are thrown during display
+        assertDoesNotThrow(() -> checkingAccount.displayAccountDetails());
+    }
+
+    @Test
+    void testGetAccountType() {
+        assertEquals("Checking", checkingAccount.getAccountType());
     }
 
     @Test
