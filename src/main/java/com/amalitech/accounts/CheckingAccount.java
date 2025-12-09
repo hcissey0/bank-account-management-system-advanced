@@ -1,0 +1,83 @@
+package com.amalitech.accounts;
+
+import com.amalitech.customers.Customer;
+import com.amalitech.exceptions.InsufficientFundsException;
+
+/** Represents a checking account with overdraft protection and monthly fees. */
+public class CheckingAccount extends Account {
+
+  private final double overdraftLimit;
+  private final double monthlyFee;
+
+  private static final String ACCOUNT_TYPE = "Checking";
+  private static final double OVERDRAFT_LIMIT = 1_000.0;
+  private static final double MONTHLY_FEE = 10.0;
+
+  public CheckingAccount(Customer customer, double initialDeposit) {
+    super(customer);
+    this.deposit(initialDeposit);
+    this.overdraftLimit = OVERDRAFT_LIMIT;
+    this.monthlyFee = MONTHLY_FEE;
+  }
+
+  public double getMonthlyFee() {
+    return monthlyFee;
+  }
+
+  public double getOverdraftLimit() {
+    return overdraftLimit;
+  }
+
+  /** Deducts the monthly fee from the account balance if sufficient funds exist. */
+  public void applyMonthlyFee() {
+    if (getBalance() > this.monthlyFee) {
+      this.setBalance(this.getBalance() - this.monthlyFee);
+    }
+  }
+
+  /**
+   * Withdraws the specified amount, allowing overdraft up to the limit.
+   *
+   * @param amount the amount to withdraw
+   * @return the new balance if successful, or -1 if overdraft limit exceeded
+   */
+  @java.lang.Override
+  public double withdraw(double amount) {
+    if (amount - this.getBalance() < this.overdraftLimit) {
+      return super.withdraw(amount);
+    }
+    return -1;
+  }
+
+  @java.lang.Override
+  public void displayAccountDetails() {
+    System.out.println("+-----------------+");
+    System.out.println("| Account Details |");
+    System.out.println("+-----------------+");
+    System.out.println("Account Number: " + this.getAccountNumber());
+    System.out.println("Customer: " + this.getCustomer().getName());
+    System.out.println("Account Type: " + this.getAccountType());
+    System.out.println("Current Balance: " + this.getBalance());
+    System.out.println("Overdraft: " + getOverdraftLimit());
+    System.out.println("Monthly fee: " + getMonthlyFee());
+    System.out.println("+--------------------------+");
+  }
+
+  @java.lang.Override
+  public String getAccountType() {
+    return ACCOUNT_TYPE;
+  }
+
+  /**
+   * Validates that a withdrawal amount does not exceed the overdraft limit.
+   *
+   * @param amount the amount to withdraw
+   * @throws InsufficientFundsException if the withdrawal would exceed the overdraft limit
+   */
+  @Override
+  protected void validateWithdrawal(double amount) throws InsufficientFundsException {
+    if (amount - this.getBalance() > this.overdraftLimit) {
+      throw new InsufficientFundsException("Withdrawal amount exceeds overdraft limit.");
+    }
+  }
+}
