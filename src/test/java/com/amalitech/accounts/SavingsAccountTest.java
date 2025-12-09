@@ -28,6 +28,16 @@ class SavingsAccountTest {
     }
 
     @Test
+    void testGetInterestRate() {
+        assertEquals(3.5, savingsAccount.getInterestRate());
+    }
+
+    @Test
+    void testGetMinimumBalance() {
+        assertEquals(500.0, savingsAccount.getMinimumBalance());
+    }
+
+    @Test
     void testCalculateInterest() {
         // 1000 * 3.5 = 3500.
         assertEquals(3500.0, savingsAccount.calculateInterest());
@@ -56,5 +66,11 @@ class SavingsAccountTest {
     @Test
     void testValidateWithdrawalFailure() {
         assertThrows(InsufficientFundsException.class, () -> savingsAccount.processTransaction(600.0, "Withdrawal"));
+    }
+
+    @Test
+    void testDisplayAccountDetails() {
+        // Just ensure no exceptions are thrown during display
+        assertDoesNotThrow(() -> savingsAccount.displayAccountDetails());
     }
 }
