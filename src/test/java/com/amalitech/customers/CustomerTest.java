@@ -43,6 +43,7 @@ class CustomerTest {
 
   @Test
   void testGettersAndSetters() {
+    assertEquals(1, Customer.getCustomerCounter());
     assertEquals("John Doe", customer.getName());
     assertEquals(30, customer.getAge());
     assertEquals("1234567890", customer.getContact());
