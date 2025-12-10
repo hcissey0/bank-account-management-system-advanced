@@ -5,16 +5,32 @@ import com.amalitech.models.*;
 import com.amalitech.utils.ConsoleTablePrinter;
 import com.amalitech.utils.InputReader;
 import com.amalitech.utils.TablePrinter;
+import java.io.IOException;
 import java.util.HashMap;
 
-/** Manages a collection of bank accounts using HashMap. */
+/** Manages a collection of bank accounts using HashMap with file persistence. */
 public class AccountManager {
   private final HashMap<String, Account> accounts;
   private final TablePrinter printer;
+  private final FilePersistenceService persistenceService;
+  private final CustomerManager customerManager;
 
-  public AccountManager() {
-    this.accounts = new HashMap<>();
+  public AccountManager(
+      CustomerManager customerManager, FilePersistenceService persistenceService) {
+    this.customerManager = customerManager;
+    this.persistenceService = persistenceService;
     this.printer = new ConsoleTablePrinter();
+    this.accounts = loadAccountsFromFile();
+  }
+
+  /** Loads accounts from file on initialization. */
+  private HashMap<String, Account> loadAccountsFromFile() {
+    try {
+      return persistenceService.loadAccounts(customerManager.getCustomers());
+    } catch (IOException e) {
+      System.err.println("Warning: Could not load accounts from file: " + e.getMessage());
+      return new HashMap<>();
+    }
   }
 
   public int getAccountCount() {
@@ -109,5 +125,19 @@ public class AccountManager {
 
   public double getTotalBalance() {
     return accounts.values().stream().mapToDouble(Account::getBalance).sum();
+  }
+
+  /** Saves all accounts to file. */
+  public void saveAccounts() {
+    try {
+      persistenceService.saveAccounts(accounts);
+    } catch (IOException e) {
+      System.err.println("Error saving accounts: " + e.getMessage());
+    }
+  }
+
+  /** Returns the accounts HashMap for persistence operations. */
+  public HashMap<String, Account> getAccounts() {
+    return accounts;
   }
 }

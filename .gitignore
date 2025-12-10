@@ -41,3 +41,6 @@ build/
 
 .idea/
 .mvn
+
+### Test Data Files ###
+src/test/resources/data/*.txt

@@ -35,12 +35,42 @@ public class Transaction {
     this.timestamp = formatter.format(time);
   }
 
+  /**
+   * Creates a transaction record with specific ID and timestamp (for loading from persistence).
+   *
+   * @param transactionId the transaction ID
+   * @param accountNumber the account associated with the transaction
+   * @param type the transaction type ("DEPOSIT" or "WITHDRAWAL")
+   * @param amount the transaction amount
+   * @param balanceAfterTransaction the account balance after this transaction
+   * @param timestamp the transaction timestamp
+   */
+  public Transaction(
+      String transactionId,
+      String accountNumber,
+      String type,
+      double amount,
+      double balanceAfterTransaction,
+      String timestamp) {
+    this.transactionId = transactionId;
+    this.accountNumber = accountNumber;
+    this.type = type;
+    this.amount = amount;
+    this.balanceAfter = balanceAfterTransaction;
+    this.timestamp = timestamp;
+  }
+
   private static String generateTransactionId() { // Generates a transactionId
     return "TXN" + String.format("%03d", ++transactionCounter);
   }
 
   public static int getTransactionCounter() {
     return transactionCounter;
+  }
+
+  /** Sets the transaction counter (used for persistence restoration). */
+  public static void setTransactionCounter(int counter) {
+    transactionCounter = counter;
   }
 
   public String getAccountNumber() {

@@ -11,20 +11,38 @@ public class Main {
     System.out.println(
         "+-------------------------+\n| BANK ACCOUNT MANAGEMENT |\n+-------------------------+");
 
-    AccountManager accountManager = new AccountManager();
-    TransactionManager transactionManager = new TransactionManager();
-    CustomerManager customerManager = new CustomerManager();
+    // Initialize persistence service
+    FilePersistenceService persistenceService = new FilePersistenceService();
+
+    // Initialize managers with persistence (order matters: customers -> accounts -> transactions)
+    CustomerManager customerManager = new CustomerManager(persistenceService);
+    AccountManager accountManager = new AccountManager(customerManager, persistenceService);
+    TransactionManager transactionManager = new TransactionManager(persistenceService);
 
     try (ConsoleInputReader inputReader = new ConsoleInputReader()) {
       int choice;
       do {
         displayMainMenu();
-        choice = inputReader.readInt("Enter your choice: ", 1, 9);
+        choice = inputReader.readInt("Enter your choice: ", 1, 10);
         handleMenuChoice(choice, accountManager, transactionManager, customerManager, inputReader);
-      } while (choice != 9);
+      } while (choice != 10);
+
+      // Save all data before exit
+      saveAllData(accountManager, customerManager, transactionManager);
     }
 
     System.out.println("Thank you for using Bank Account Management System!\nGoodbye!");
+  }
+
+  private static void saveAllData(
+      AccountManager accountManager,
+      CustomerManager customerManager,
+      TransactionManager transactionManager) {
+    System.out.println("\nSaving data...");
+    customerManager.saveCustomers();
+    accountManager.saveAccounts();
+    transactionManager.saveTransactions();
+    System.out.println("Data saved successfully!");
   }
 
   private static void displayMainMenu() {
@@ -33,7 +51,7 @@ public class Main {
         "1. Create Account\n2. View Accounts\n3. View Customers\n4. Process Transaction");
     System.out.println(
         "5. View Transaction History for an account\n6. View all Transaction Histories");
-    System.out.println("7. Generate Bank Statement\n8. Run Tests\n9. Exit\n");
+    System.out.println("7. Generate Bank Statement\n8. Run Tests\n9. Save Data\n10. Exit\n");
   }
 
   private static void handleMenuChoice(
@@ -51,7 +69,11 @@ public class Main {
       case 6 -> transactionManager.viewAllTransactions(inputReader);
       case 7 -> generateBankStatement(accountManager, transactionManager, inputReader);
       case 8 -> runTests(inputReader);
-      case 9 -> {}
+      case 9 -> {
+        saveAllData(accountManager, customerManager, transactionManager);
+        inputReader.waitForEnter();
+      }
+      case 10 -> {}
       default -> System.out.println("Invalid Input. Try Again!");
     }
   }
@@ -146,6 +168,7 @@ public class Main {
     try {
       account.processTransaction(transaction.getAmount(), transaction.getType());
       transactionManager.addTransaction(transaction);
+      transactionManager.saveTransactions(); // Auto-save after transaction
       System.out.printf(
           "%s Successful! New Balance: $%.2f\n", transaction.getType(), account.getBalance());
     } catch (BankException e) {
@@ -173,6 +196,8 @@ public class Main {
         .toLowerCase()
         .startsWith("y")) {
       accountManager.addAccount(account);
+      customerManager.saveCustomers(); // Auto-save customer
+      accountManager.saveAccounts(); // Auto-save account
       System.out.println("Account Created Successfully!");
       account.displayAccountDetails();
       customer.displayCustomerDetails();
@@ -188,14 +213,22 @@ public class Main {
     String contact = inputReader.readString("Enter customer contact: ");
     String address = inputReader.readString("Enter customer address: ");
 
-    System.out.println("\nCustomer type:\n1. Regular Customer\n2. Premium Customer");
+    System.out.println(
+        "\n"
+            + "Customer type:\n"
+            + "1. Regular Customer (Standard Banking Services)\n"
+            + "2. Premium Customer (Enhanced Benefits, Minimum Balance $10,000)");
     return inputReader.readInt("\nSelect type (1-2): ", 1, 2) == 1
         ? new RegularCustomer(name, age, contact, address)
         : new PremiumCustomer(name, age, contact, address);
   }
 
   private static Account createAccountForCustomer(InputReader inputReader, Customer customer) {
-    System.out.println("\nAccount type:\n1. Savings Account\n2. Checking Account");
+    System.out.println(
+        "\n"
+            + "Account type:\n"
+            + "1. Savings Account (Interest Rate: 3.5%, Minimum Balance: $500)\n"
+            + "2. Checking Account (Overdraft Limit: $1,000, Monthly Fee: $10)");
     int accountType = inputReader.readInt("\nSelect type (1-2): ", 1, 2);
 
     double minDeposit =

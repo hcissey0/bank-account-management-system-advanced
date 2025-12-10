@@ -19,6 +19,13 @@ public class CheckingAccount extends Account {
     this.monthlyFee = MONTHLY_FEE;
   }
 
+  /** Constructor for loading existing account (for persistence). */
+  public CheckingAccount(String existingAccountNumber, Customer customer, double balance) {
+    super(existingAccountNumber, customer, balance);
+    this.overdraftLimit = OVERDRAFT_LIMIT;
+    this.monthlyFee = MONTHLY_FEE;
+  }
+
   public double getMonthlyFee() {
     return monthlyFee;
   }

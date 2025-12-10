@@ -4,17 +4,30 @@ import com.amalitech.models.*;
 import com.amalitech.utils.ConsoleTablePrinter;
 import com.amalitech.utils.InputReader;
 import com.amalitech.utils.TablePrinter;
+import java.io.IOException;
 import java.util.HashMap;
 
-/** Manages a collection of bank customers using HashMap. */
+/** Manages a collection of bank customers using HashMap with file persistence. */
 public class CustomerManager {
 
   private final HashMap<String, Customer> customers;
   private final TablePrinter printer;
+  private final FilePersistenceService persistenceService;
 
-  public CustomerManager() {
-    this.customers = new HashMap<>();
+  public CustomerManager(FilePersistenceService persistenceService) {
+    this.persistenceService = persistenceService;
     this.printer = new ConsoleTablePrinter();
+    this.customers = loadCustomersFromFile();
+  }
+
+  /** Loads customers from file on initialization. */
+  private HashMap<String, Customer> loadCustomersFromFile() {
+    try {
+      return persistenceService.loadCustomers();
+    } catch (IOException e) {
+      System.err.println("Warning: Could not load customers from file: " + e.getMessage());
+      return new HashMap<>();
+    }
   }
 
   /** Adds a customer to the system. */
@@ -76,5 +89,19 @@ public class CustomerManager {
 
   public int getCustomerCount() {
     return customers.size();
+  }
+
+  /** Saves all customers to file. */
+  public void saveCustomers() {
+    try {
+      persistenceService.saveCustomers(customers);
+    } catch (IOException e) {
+      System.err.println("Error saving customers: " + e.getMessage());
+    }
+  }
+
+  /** Returns the customers HashMap for persistence operations. */
+  public HashMap<String, Customer> getCustomers() {
+    return customers;
   }
 }
