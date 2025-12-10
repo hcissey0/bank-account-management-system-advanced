@@ -1,3 +1,4 @@
 customerType,customerId,name,age,contact,address
 Premium,CUS001,hassan,23,23,23
 Premium,CUS002,hs,3,3,3
+Premium,CUS003,has,3,3,3
