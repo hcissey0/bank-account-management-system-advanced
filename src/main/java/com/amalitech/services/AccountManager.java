@@ -1,41 +1,40 @@
 package com.amalitech.services;
 
 import com.amalitech.exceptions.AccountNotFoundException;
+import com.amalitech.models.*;
 import com.amalitech.utils.ConsoleTablePrinter;
 import com.amalitech.utils.InputReader;
 import com.amalitech.utils.TablePrinter;
-import com.amalitech.models.*;
+import java.util.HashMap;
 
-/** Manages a collection of bank accounts with fixed capacity. */
+/** Manages a collection of bank accounts using HashMap. */
 public class AccountManager {
-  private static final int MAX_ACCOUNTS = 50;
-
-  private final Account[] accounts;
-  private int accountCount;
+  private final HashMap<String, Account> accounts;
   private final TablePrinter printer;
 
   public AccountManager() {
-    this.accounts = new Account[MAX_ACCOUNTS];
-    this.accountCount = 0;
+    this.accounts = new HashMap<>();
     this.printer = new ConsoleTablePrinter();
   }
 
   public int getAccountCount() {
-    return accountCount;
+    return accounts.size();
   }
 
   public void addAccount(Account account) {
-    if (accountCount < MAX_ACCOUNTS) this.accounts[this.accountCount++] = account;
-    else System.out.println("Account limit reached.");
+    if (account == null) {
+      System.out.println("Cannot add null account.");
+      return;
+    }
+    accounts.put(account.getAccountNumber(), account);
   }
 
   public Account findAccount(String accountNumber) throws AccountNotFoundException {
-    for (int i = 0; i < this.accountCount; i++) {
-      if (this.accounts[i].getAccountNumber().equals(accountNumber)) {
-        return this.accounts[i];
-      }
+    Account account = accounts.get(accountNumber);
+    if (account == null) {
+      throw new AccountNotFoundException("Account with number " + accountNumber + " not found.");
     }
-    throw new AccountNotFoundException("Account with number " + accountNumber + " not found.");
+    return account;
   }
 
   /**
@@ -46,7 +45,7 @@ public class AccountManager {
   public void viewAllAccounts(InputReader inputReader) {
     String[] headers = {"ACCOUNT NUMBER", "CUSTOMER NAME", "TYPE", "BALANCE", "STATUS"};
 
-    if (accountCount == 0) {
+    if (accounts.isEmpty()) {
       System.out.println("No accounts available.");
       inputReader.waitForEnter();
       return;
@@ -57,16 +56,15 @@ public class AccountManager {
     printer.printTable(headers, data);
 
     System.out.println();
-    System.out.println("Total Accounts: " + this.accountCount);
+    System.out.println("Total Accounts: " + getAccountCount());
     System.out.println("Total Bank Balance: $" + getTotalBalance());
 
     inputReader.waitForEnter();
   }
 
-  /** Constructs a 2D array of formatted account data for tabular display. */
+  /** Constructs a 2D array of formatted account data for tabular display using Stream API. */
   private String[][] buildTableData() {
-    return java.util.stream.IntStream.range(0, this.accountCount)
-        .mapToObj(i -> this.accounts[i])
+    return accounts.values().stream()
         .map(
             acc ->
                 new String[] {
@@ -110,9 +108,6 @@ public class AccountManager {
   }
 
   public double getTotalBalance() {
-    double totalBalance = 0;
-    for (int i = 0; i < this.accountCount; i++) totalBalance += this.accounts[i].getBalance();
-
-    return totalBalance;
+    return accounts.values().stream().mapToDouble(Account::getBalance).sum();
   }
 }

@@ -4,6 +4,7 @@ package com.amalitech.models;
 import com.amalitech.exceptions.BankException;
 import com.amalitech.exceptions.InvalidAmountException;
 
+
 /**
  * Abstract base class for bank accounts, implementing {@link Transactable} for transactions.
  * Manages account number, customer, status, and balance.

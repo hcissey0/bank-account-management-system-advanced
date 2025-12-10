@@ -1,11 +1,11 @@
 package com.amalitech.services;
 
 import static org.junit.jupiter.api.Assertions.*;
+
 import com.amalitech.models.*;
+import com.amalitech.utils.InputReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import com.amalitech.utils.InputReader;
 
 /** Unit tests for TransactionManager including add, totals, and capacity limit operations. */
 class TransactionManagerTest {
@@ -50,15 +50,16 @@ class TransactionManagerTest {
 
   @Test
   void testTransactionLimit() {
-    // Assuming limit is 200 based on code reading
+    // With ArrayList, there's no fixed capacity limit
+    // Verify we can add more than the old array limit of 200
     for (int i = 0; i < 200; i++) {
       transactionManager.addTransaction(new Transaction("ACC001", "DEPOSIT", 1.0, 1.0));
     }
     assertEquals(200, transactionManager.getTransactionCount());
 
-    // Try adding one more
+    // Add one more - should succeed with ArrayList
     transactionManager.addTransaction(new Transaction("ACC001", "DEPOSIT", 1.0, 1.0));
-    assertEquals(200, transactionManager.getTransactionCount());
+    assertEquals(201, transactionManager.getTransactionCount());
   }
 
   @Test
@@ -76,53 +77,60 @@ class TransactionManagerTest {
     transactionManager.addTransaction(transaction1);
     transactionManager.addTransaction(transaction2);
 
-    assertDoesNotThrow(() -> transactionManager.viewAllTransactions(new InputReader() {
-      @Override
-      public String readString(String prompt) {
-        return null;
-      }
+    assertDoesNotThrow(
+        () ->
+            transactionManager.viewAllTransactions(
+                new InputReader() {
+                  @Override
+                  public String readString(String prompt) {
+                    return null;
+                  }
 
-      @Override
-      public int readInt(String prompt, int min, int max) {
-        return 0;
-      }
+                  @Override
+                  public int readInt(String prompt, int min, int max) {
+                    return 0;
+                  }
 
-      @Override
-      public double readDouble(String prompt, double min) {
-        return 0;
-      }
+                  @Override
+                  public double readDouble(String prompt, double min) {
+                    return 0;
+                  }
 
-      @Override
-      public void waitForEnter() {
-        // No-op for testing
-      }
-    }));
+                  @Override
+                  public void waitForEnter() {
+                    // No-op for testing
+                  }
+                }));
   }
+
   @Test
   void testViewAllTransactionsEmpty() {
     // Since viewAllTransactions prints to console, we can only ensure no exceptions are thrown
 
-    assertDoesNotThrow(() -> transactionManager.viewAllTransactions(new InputReader() {
-      @Override
-      public String readString(String prompt) {
-        return null;
-      }
+    assertDoesNotThrow(
+        () ->
+            transactionManager.viewAllTransactions(
+                new InputReader() {
+                  @Override
+                  public String readString(String prompt) {
+                    return null;
+                  }
 
-      @Override
-      public int readInt(String prompt, int min, int max) {
-        return 0;
-      }
+                  @Override
+                  public int readInt(String prompt, int min, int max) {
+                    return 0;
+                  }
 
-      @Override
-      public double readDouble(String prompt, double min) {
-        return 0;
-      }
+                  @Override
+                  public double readDouble(String prompt, double min) {
+                    return 0;
+                  }
 
-      @Override
-      public void waitForEnter() {
-        // No-op for testing
-      }
-    }));
+                  @Override
+                  public void waitForEnter() {
+                    // No-op for testing
+                  }
+                }));
   }
 
   @Test
@@ -131,56 +139,60 @@ class TransactionManagerTest {
     Transaction transaction2 = new Transaction("ACC002", "WITHDRAWAL", 50.0, 50.0);
     transactionManager.addTransaction(transaction1);
     transactionManager.addTransaction(transaction2);
-    assertDoesNotThrow(() -> transactionManager.viewTransactionsByAccount(
-      "ACC001",
-      new InputReader() {
-      @Override
-      public String readString(String prompt) {
-        return null;
-      }
+    assertDoesNotThrow(
+        () ->
+            transactionManager.viewTransactionsByAccount(
+                "ACC001",
+                new InputReader() {
+                  @Override
+                  public String readString(String prompt) {
+                    return null;
+                  }
 
-      @Override
-      public int readInt(String prompt, int min, int max) {
-        return 0;
-      }
+                  @Override
+                  public int readInt(String prompt, int min, int max) {
+                    return 0;
+                  }
 
-      @Override
-      public double readDouble(String prompt, double min) {
-        return 0;
-      }
+                  @Override
+                  public double readDouble(String prompt, double min) {
+                    return 0;
+                  }
 
-      @Override
-      public void waitForEnter() {
-        // No-op for testing
-      }
-    }));
+                  @Override
+                  public void waitForEnter() {
+                    // No-op for testing
+                  }
+                }));
   }
 
   @Test
   void testViewTransactionsByAccountEmpty() {
-    assertDoesNotThrow(() -> transactionManager.viewTransactionsByAccount(
-      "ACC001",
-      new InputReader() {
-      @Override
-      public String readString(String prompt) {
-        return null;
-      }
+    assertDoesNotThrow(
+        () ->
+            transactionManager.viewTransactionsByAccount(
+                "ACC001",
+                new InputReader() {
+                  @Override
+                  public String readString(String prompt) {
+                    return null;
+                  }
 
-      @Override
-      public int readInt(String prompt, int min, int max) {
-        return 0;
-      }
+                  @Override
+                  public int readInt(String prompt, int min, int max) {
+                    return 0;
+                  }
 
-      @Override
-      public double readDouble(String prompt, double min) {
-        return 0;
-      }
+                  @Override
+                  public double readDouble(String prompt, double min) {
+                    return 0;
+                  }
 
-      @Override
-      public void waitForEnter() {
-        // No-op for testing
-      }
-    }));
+                  @Override
+                  public void waitForEnter() {
+                    // No-op for testing
+                  }
+                }));
   }
 
   @Test
