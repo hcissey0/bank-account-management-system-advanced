@@ -1,6 +1,5 @@
-package com.amalitech.accounts;
+package com.amalitech.models;
 
-import com.amalitech.customers.Customer;
 import com.amalitech.exceptions.InsufficientFundsException;
 
 /** Represents a checking account with overdraft protection and monthly fees. */

@@ -1,4 +1,4 @@
-package com.amalitech.transactions;
+package com.amalitech.models;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

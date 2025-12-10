@@ -1,8 +1,9 @@
-package com.amalitech.transactions;
+package com.amalitech.services;
 
 import com.amalitech.utils.ConsoleTablePrinter;
 import com.amalitech.utils.InputReader;
 import com.amalitech.utils.TablePrinter;
+import com.amalitech.models.*;
 
 /** Manages a collection of transactions with fixed capacity. */
 public class TransactionManager {

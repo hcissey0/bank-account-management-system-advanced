@@ -1,6 +1,5 @@
-package com.amalitech.accounts;
+package com.amalitech.models;
 
-import com.amalitech.customers.Customer;
 import com.amalitech.exceptions.InsufficientFundsException;
 
 /** Represents a savings account with an interest rate and a minimum balance requirement. */

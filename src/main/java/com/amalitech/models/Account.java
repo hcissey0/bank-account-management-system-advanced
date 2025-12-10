@@ -1,9 +1,8 @@
-package com.amalitech.accounts;
+package com.amalitech.models;
 
-import com.amalitech.customers.*;
+
 import com.amalitech.exceptions.BankException;
 import com.amalitech.exceptions.InvalidAmountException;
-import com.amalitech.transactions.Transactable;
 
 /**
  * Abstract base class for bank accounts, implementing {@link Transactable} for transactions.

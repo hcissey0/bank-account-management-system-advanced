@@ -1,4 +1,4 @@
-package com.amalitech.customers;
+package com.amalitech.models;
 
 import static org.junit.jupiter.api.Assertions.*;
 

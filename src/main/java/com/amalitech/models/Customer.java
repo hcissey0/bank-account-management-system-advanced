@@ -1,4 +1,4 @@
-package com.amalitech.customers;
+package com.amalitech.models;
 
 /** Abstract base class representing a bank customer with personal details. */
 public abstract class Customer {

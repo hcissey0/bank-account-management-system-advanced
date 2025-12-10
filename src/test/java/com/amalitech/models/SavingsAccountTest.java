@@ -1,7 +1,5 @@
-package com.amalitech.accounts;
+package com.amalitech.models;
 
-import com.amalitech.customers.Customer;
-import com.amalitech.customers.RegularCustomer;
 import com.amalitech.exceptions.InsufficientFundsException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
