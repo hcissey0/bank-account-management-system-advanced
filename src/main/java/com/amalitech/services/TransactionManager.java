@@ -7,7 +7,6 @@ import com.amalitech.utils.TablePrinter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /** Manages a collection of transactions using ArrayList with file persistence. */
 public class TransactionManager {
@@ -17,9 +16,9 @@ public class TransactionManager {
 
   private final List<Transaction> transactions;
   private final TablePrinter printer;
-  private final FilePersistenceService persistenceService;
+  private final PersistenceService persistenceService;
 
-  public TransactionManager(FilePersistenceService persistenceService) {
+  public TransactionManager(PersistenceService persistenceService) {
     this.persistenceService = persistenceService;
     this.printer = new ConsoleTablePrinter();
     this.transactions = loadTransactionsFromFile();
@@ -128,9 +127,7 @@ public class TransactionManager {
 
   /** Returns all transactions for the specified account as a List using Stream API. */
   private List<Transaction> getTransactionsListForAccount(String accountNumber) {
-    return transactions.stream()
-        .filter(t -> t.getAccountNumber().equals(accountNumber))
-        .toList();
+    return transactions.stream().filter(t -> t.getAccountNumber().equals(accountNumber)).toList();
   }
 
   /** Returns total deposits for the specified account using Stream API. */

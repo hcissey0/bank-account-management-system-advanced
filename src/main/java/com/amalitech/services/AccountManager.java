@@ -12,11 +12,10 @@ import java.util.HashMap;
 public class AccountManager {
   private final HashMap<String, Account> accounts;
   private final TablePrinter printer;
-  private final FilePersistenceService persistenceService;
+  private final PersistenceService persistenceService;
   private final CustomerManager customerManager;
 
-  public AccountManager(
-      CustomerManager customerManager, FilePersistenceService persistenceService) {
+  public AccountManager(CustomerManager customerManager, PersistenceService persistenceService) {
     this.customerManager = customerManager;
     this.persistenceService = persistenceService;
     this.printer = new ConsoleTablePrinter();
