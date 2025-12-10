@@ -13,7 +13,14 @@ public class ReportOperations {
       TransactionManager transactionManager,
       InputReader inputReader) {
     System.out.println("\n+----------------+\n| BANK STATEMENT |\n+----------------+");
-    String accountNumber = inputReader.readString("\nEnter Account number: ");
+    String accountNumber;
+    while (true) {
+      accountNumber = inputReader.readString("\nEnter Account number: ");
+      if (ValidationUtils.isValidAccountNumber(accountNumber)) {
+        break;
+      }
+      System.out.println("Invalid Account Number format. Expected format: ACCxxx (e.g., ACC001)");
+    }
 
     try {
       Account account = accountManager.findAccount(accountNumber);

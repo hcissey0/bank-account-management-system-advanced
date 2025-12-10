@@ -5,6 +5,7 @@ import com.amalitech.exceptions.BankException;
 import com.amalitech.models.*;
 import com.amalitech.services.*;
 import com.amalitech.utils.InputReader;
+import com.amalitech.utils.ValidationUtils;
 
 /** Handles all transaction-related operations. */
 public class TransactionOperations {
@@ -15,7 +16,14 @@ public class TransactionOperations {
       InputReader inputReader) {
     System.out.println(
         "\n+---------------------+\n| PROCESS TRANSACTION |\n+---------------------+");
-    String accountNumber = inputReader.readString("\nEnter Account number: ");
+    String accountNumber;
+    while (true) {
+      accountNumber = inputReader.readString("\nEnter Account number: ");
+      if (ValidationUtils.isValidAccountNumber(accountNumber)) {
+        break;
+      }
+      System.out.println("Invalid Account Number format. Expected format: ACCxxx (e.g., ACC001)");
+    }
 
     try {
       Account account = accountManager.findAccount(accountNumber);
@@ -34,7 +42,14 @@ public class TransactionOperations {
             + "+--------------------------+\n"
             + "| VIEW TRANSACTION HISTORY |\n"
             + "+--------------------------+");
-    String accountNumber = inputReader.readString("\nEnter Account number: ");
+    String accountNumber;
+    while (true) {
+      accountNumber = inputReader.readString("\nEnter Account number: ");
+      if (ValidationUtils.isValidAccountNumber(accountNumber)) {
+        break;
+      }
+      System.out.println("Invalid Account Number format. Expected format: ACCxxx (e.g., ACC001)");
+    }
     transactionManager.viewTransactionsByAccount(accountNumber, inputReader);
   }
 
