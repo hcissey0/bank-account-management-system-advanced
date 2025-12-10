@@ -12,11 +12,12 @@ class CustomerTest {
 
   /** Concrete implementation for testing abstract Customer class. */
   private static class TestCustomer extends Customer {
-    TestCustomer(String name, int age, String contact, String address) {
+    TestCustomer(String name, int age, String contact, String address, String email) {
       this.setName(name);
       this.setAge(age);
       this.setContact(contact);
       this.setAddress(address);
+      this.setEmail(email);
     }
 
     @Override
@@ -32,7 +33,7 @@ class CustomerTest {
 
   @BeforeEach
   void setUp() {
-    customer = new TestCustomer("John Doe", 30, "1234567890", "123 Main St");
+    customer = new TestCustomer("John Doe", 30, "1234567890", "123 Main St", "john@example.com");
   }
 
   @Test
@@ -48,6 +49,7 @@ class CustomerTest {
     assertEquals(30, customer.getAge());
     assertEquals("1234567890", customer.getContact());
     assertEquals("123 Main St", customer.getAddress());
+    assertEquals("john@example.com", customer.getEmail());
     assertEquals("Test", customer.getCustomerType());
 
     customer.setName("Jane Doe");

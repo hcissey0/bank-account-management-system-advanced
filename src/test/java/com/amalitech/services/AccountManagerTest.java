@@ -27,7 +27,7 @@ class AccountManagerTest {
     persistenceService = new FilePersistenceService("src/test/resources/data/");
     customerManager = new CustomerManager(persistenceService);
     accountManager = new AccountManager(customerManager, persistenceService);
-    customer = new RegularCustomer("Alice", 28, "555-0101", "321 Pine St");
+    customer = new RegularCustomer("Alice", 28, "555-0101", "321 Pine St", "alice@example.com");
     customerManager.addCustomer(customer);
   }
 

@@ -12,7 +12,7 @@ class PremiumCustomerTest {
 
   @BeforeEach
   void setUp() {
-    premiumCustomer = new PremiumCustomer("Bob", 40, "555-5678", "321 Pine Rd");
+    premiumCustomer = new PremiumCustomer("Bob", 40, "555-5678", "321 Pine Rd", "bob@example.com");
   }
 
   @Test
@@ -21,6 +21,7 @@ class PremiumCustomerTest {
     assertEquals(40, premiumCustomer.getAge());
     assertEquals("555-5678", premiumCustomer.getContact());
     assertEquals("321 Pine Rd", premiumCustomer.getAddress());
+    assertEquals("bob@example.com", premiumCustomer.getEmail());
   }
 
   @Test

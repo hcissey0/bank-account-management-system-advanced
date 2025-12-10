@@ -2,7 +2,7 @@ package com.amalitech.models;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.amalitech.exceptions.InsufficientFundsException;
+import com.amalitech.exceptions.OverdraftLimitExceededException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -13,7 +13,7 @@ class CheckingAccountTest {
 
   @BeforeEach
   void setUp() {
-    customer = new RegularCustomer("Jane Doe", 25, "0987654321", "456 Elm St");
+    customer = new RegularCustomer("Jane Doe", 25, "0987654321", "456 Elm St", "jane@example.com");
     checkingAccount = new CheckingAccount(customer, 100.0);
   }
 
@@ -42,7 +42,7 @@ class CheckingAccountTest {
   }
 
   @Test
-  void testApplyMonthlyFeeInsufficientBalance() {
+  void testApplyMonthlyFeeInsufficientBalance() throws Exception {
     // Fee is 10. Set balance to 5.
     checkingAccount.withdraw(95.0); // Balance becomes 5
     checkingAccount.applyMonthlyFee();
@@ -50,13 +50,13 @@ class CheckingAccountTest {
   }
 
   @Test
-  void testWithdrawWithinBalance() {
+  void testWithdrawWithinBalance() throws Exception {
     checkingAccount.withdraw(50.0);
     assertEquals(50.0, checkingAccount.getBalance());
   }
 
   @Test
-  void testWithdrawWithinOverdraft() {
+  void testWithdrawWithinOverdraft() throws Exception {
     // Balance 100. Overdraft 1000. Can withdraw up to 1100.
     // Withdraw 200. Balance should be -100.
     checkingAccount.withdraw(200.0);
@@ -67,8 +67,9 @@ class CheckingAccountTest {
   void testWithdrawExceedingOverdraft() {
     // Balance 100. Overdraft 1000. Max withdraw 1100.
     // Try 1200.
-    double result = checkingAccount.withdraw(1200.0);
-    assertEquals(-1, result); // Returns -1 on failure
+    assertThrows(
+        OverdraftLimitExceededException.class,
+        () -> checkingAccount.processTransaction(1200.0, "Withdrawal"));
     assertEquals(100.0, checkingAccount.getBalance()); // Balance unchanged
   }
 
@@ -91,7 +92,7 @@ class CheckingAccountTest {
   @Test
   void testValidateWithdrawalFailure() {
     assertThrows(
-        InsufficientFundsException.class,
+        OverdraftLimitExceededException.class,
         () -> checkingAccount.processTransaction(1200.0, "Withdrawal"));
   }
 }

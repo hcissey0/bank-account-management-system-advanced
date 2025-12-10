@@ -1,9 +1,11 @@
 package com.amalitech.main;
 
 import com.amalitech.exceptions.AccountNotFoundException;
+import com.amalitech.exceptions.InvalidInputException;
 import com.amalitech.models.*;
 import com.amalitech.services.*;
 import com.amalitech.utils.InputReader;
+import com.amalitech.utils.ValidationUtils;
 
 /** Handles all account-related operations. */
 public class AccountOperations {
@@ -41,7 +43,16 @@ public class AccountOperations {
 
   public static void findAndDisplayAccount(AccountManager accountManager, InputReader inputReader) {
     System.out.println("\n+---------------+\n| FIND ACCOUNT  |\n+---------------+");
-    String accountNumber = inputReader.readString("\nEnter Account number: ");
+    String accountNumber;
+    while (true) {
+      accountNumber = inputReader.readString("\nEnter Account number: ");
+      try {
+        ValidationUtils.validateAccountNumber(accountNumber);
+        break;
+      } catch (InvalidInputException e) {
+        System.out.println(e.getMessage());
+      }
+    }
     try {
       Account account = accountManager.findAccount(accountNumber);
       account.displayAccountDetails();

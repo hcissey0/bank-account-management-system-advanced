@@ -2,7 +2,6 @@ package com.amalitech.models;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.amalitech.exceptions.BankException;
 import com.amalitech.exceptions.InvalidAmountException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,16 +28,17 @@ class AccountTest {
     }
 
     @Override
-    protected void validateWithdrawal(double amount) throws BankException {
+    public double withdraw(double amount) throws Exception {
       if (amount > getBalance()) {
         throw new InvalidAmountException("Insufficient funds");
       }
+      return super.withdraw(amount);
     }
   }
 
   @BeforeEach
   void setUp() {
-    customer = new RegularCustomer("John Doe", 30, "1234567890", "123 Main St");
+    customer = new RegularCustomer("John Doe", 30, "1234567890", "123 Main St", "john@example.com");
     account = new TestAccount(customer);
   }
 
@@ -57,20 +57,20 @@ class AccountTest {
   }
 
   @Test
-  void testWithdraw() {
+  void testWithdraw() throws Exception {
     account.deposit(100.0);
     account.withdraw(50.0);
     assertEquals(50.0, account.getBalance());
   }
 
   @Test
-  void testProcessTransactionDeposit() throws BankException {
+  void testProcessTransactionDeposit() throws Exception {
     account.processTransaction(100.0, "Deposit");
     assertEquals(100.0, account.getBalance());
   }
 
   @Test
-  void testProcessTransactionWithdrawal() throws BankException {
+  void testProcessTransactionWithdrawal() throws Exception {
     account.deposit(100.0);
     account.processTransaction(50.0, "Withdrawal");
     assertEquals(50.0, account.getBalance());
@@ -78,12 +78,12 @@ class AccountTest {
 
   @Test
   void testProcessTransactionWithWrongType() {
-    assertThrows(BankException.class, () -> account.processTransaction(100.0, "InvalidType"));
+    assertThrows(Exception.class, () -> account.processTransaction(100.0, "InvalidType"));
   }
 
   @Test
   void testProcessTransactionInvalidType() {
-    assertThrows(BankException.class, () -> account.processTransaction(100.0, "Invalid"));
+    assertThrows(Exception.class, () -> account.processTransaction(100.0, "Invalid"));
   }
 
   @Test
@@ -92,8 +92,8 @@ class AccountTest {
   }
 
   @Test
-  void testValidateWithdrawalInsufficientFunds() {
-    assertThrows(InvalidAmountException.class, () -> account.validateWithdrawal(10.0));
+  void testWithdrawInsufficientFunds() {
+    assertThrows(InvalidAmountException.class, () -> account.withdraw(10.0));
   }
 
   @Test
@@ -119,13 +119,13 @@ class AccountTest {
   }
 
   @Test
-  void testValidateAmountDeposit() throws BankException {
+  void testValidateAmountDeposit() throws Exception {
     // Should not throw exception for valid positive amount
     account.validateAmount(100.0, "Deposit");
   }
 
   @Test
-  void testValidateAmountWithdrawal() throws BankException {
+  void testValidateAmountWithdrawal() throws Exception {
     account.deposit(200.0);
     // Should not throw exception for valid withdrawal amount
     account.validateAmount(100.0, "Withdrawal");
@@ -139,6 +139,6 @@ class AccountTest {
   @Test
   void testValidateAmountWithdrawalInvalid() {
     // TestAccount implementation throws if amount > balance
-    assertThrows(InvalidAmountException.class, () -> account.validateAmount(50.0, "Withdrawal"));
+    assertThrows(InvalidAmountException.class, () -> account.withdraw(50.0));
   }
 }

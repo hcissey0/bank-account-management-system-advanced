@@ -12,7 +12,8 @@ class RegularCustomerTest {
 
   @BeforeEach
   void setUp() {
-    regularCustomer = new RegularCustomer("Alice", 25, "555-1234", "789 Oak Ave");
+    regularCustomer =
+        new RegularCustomer("Alice", 25, "555-1234", "789 Oak Ave", "alice@example.com");
   }
 
   @Test
@@ -21,6 +22,7 @@ class RegularCustomerTest {
     assertEquals(25, regularCustomer.getAge());
     assertEquals("555-1234", regularCustomer.getContact());
     assertEquals("789 Oak Ave", regularCustomer.getAddress());
+    assertEquals("alice@example.com", regularCustomer.getEmail());
   }
 
   @Test

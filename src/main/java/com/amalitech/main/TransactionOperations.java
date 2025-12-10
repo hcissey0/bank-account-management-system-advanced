@@ -1,10 +1,11 @@
 package com.amalitech.main;
 
 import com.amalitech.exceptions.AccountNotFoundException;
-import com.amalitech.exceptions.BankException;
+import com.amalitech.exceptions.InvalidInputException;
 import com.amalitech.models.*;
 import com.amalitech.services.*;
 import com.amalitech.utils.InputReader;
+import com.amalitech.utils.ValidationUtils;
 
 /** Handles all transaction-related operations. */
 public class TransactionOperations {
@@ -15,7 +16,16 @@ public class TransactionOperations {
       InputReader inputReader) {
     System.out.println(
         "\n+---------------------+\n| PROCESS TRANSACTION |\n+---------------------+");
-    String accountNumber = inputReader.readString("\nEnter Account number: ");
+    String accountNumber;
+    while (true) {
+      accountNumber = inputReader.readString("\nEnter Account number: ");
+      try {
+        ValidationUtils.validateAccountNumber(accountNumber);
+        break;
+      } catch (InvalidInputException e) {
+        System.out.println(e.getMessage());
+      }
+    }
 
     try {
       Account account = accountManager.findAccount(accountNumber);
@@ -34,7 +44,16 @@ public class TransactionOperations {
             + "+--------------------------+\n"
             + "| VIEW TRANSACTION HISTORY |\n"
             + "+--------------------------+");
-    String accountNumber = inputReader.readString("\nEnter Account number: ");
+    String accountNumber;
+    while (true) {
+      accountNumber = inputReader.readString("\nEnter Account number: ");
+      try {
+        ValidationUtils.validateAccountNumber(accountNumber);
+        break;
+      } catch (InvalidInputException e) {
+        System.out.println(e.getMessage());
+      }
+    }
     transactionManager.viewTransactionsByAccount(accountNumber, inputReader);
   }
 
@@ -102,7 +121,7 @@ public class TransactionOperations {
       transactionManager.saveTransactions();
       System.out.printf(
           "%s Successful! New Balance: $%.2f\n", transaction.getType(), account.getBalance());
-    } catch (BankException e) {
+    } catch (Exception e) {
       System.out.println("Transaction failed: " + e.getMessage());
     }
   }

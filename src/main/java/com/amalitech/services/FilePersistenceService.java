@@ -126,7 +126,7 @@ public class FilePersistenceService {
     ensureDirectoryExists(path.getParent());
 
     List<String> lines = new ArrayList<>();
-    lines.add("customerType,customerId,name,age,contact,address");
+    lines.add("customerType,customerId,name,age,contact,address,email");
 
     customers.values().stream().map(this::customerToCsv).forEach(lines::add);
 
@@ -234,7 +234,7 @@ public class FilePersistenceService {
   private Customer parseCustomer(String line) {
     try {
       String[] parts = line.split(",");
-      if (parts.length < 6) return null;
+      if (parts.length < 7) return null;
 
       String customerType = parts[0].trim();
       String customerId = parts[1].trim();
@@ -242,12 +242,13 @@ public class FilePersistenceService {
       int age = Integer.parseInt(parts[3].trim());
       String contact = parts[4].trim();
       String address = parts[5].trim();
+      String email = parts[6].trim();
 
       Customer customer;
       if (customerType.equalsIgnoreCase("Regular")) {
-        customer = new RegularCustomer(customerId, name, age, contact, address);
+        customer = new RegularCustomer(customerId, name, age, contact, address, email);
       } else if (customerType.equalsIgnoreCase("Premium")) {
-        customer = new PremiumCustomer(customerId, name, age, contact, address);
+        customer = new PremiumCustomer(customerId, name, age, contact, address, email);
       } else {
         return null;
       }
@@ -262,13 +263,14 @@ public class FilePersistenceService {
 
   private String customerToCsv(Customer customer) {
     return String.format(
-        "%s,%s,%s,%d,%s,%s",
+        "%s,%s,%s,%d,%s,%s,%s",
         customer.getCustomerType(),
         customer.getCustomerId(),
         customer.getName(),
         customer.getAge(),
         customer.getContact(),
-        customer.getAddress());
+        customer.getAddress(),
+        customer.getEmail());
   }
 
   private Transaction parseTransaction(String line) {
