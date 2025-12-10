@@ -39,21 +39,6 @@ public class SavingsAccount extends Account {
     return this.getBalance() * this.interestRate;
   }
 
-  /**
-   * Withdraws the specified amount from the account, ensuring the minimum balance is maintained.
-   *
-   * @param amount the amount to withdraw
-   * @return the new balance after withdrawal, or -1 if withdrawal would breach minimum balance
-   */
-  @java.lang.Override
-  public double withdraw(double amount) {
-
-    if (this.getBalance() - amount >= this.minimumBalance) {
-      return super.withdraw(amount);
-    }
-    return -1;
-  }
-
   @java.lang.Override
   public void displayAccountDetails() {
     System.out.println("+-----------------+");
@@ -75,14 +60,14 @@ public class SavingsAccount extends Account {
   }
 
   /**
-   * Validates that a withdrawal amount does not breach the minimum balance requirement.
+   * Withdraws amount from the account if it does not breach the minimum balance requirement.
    *
    * @param amount the amount to withdraw
-   * @throws InsufficientFundsException if the withdrawal would result in a balance below the
-   *     minimum
+   * @return the new balance
+   * @throws Exception if the withdrawal would result in a balance below the minimum
    */
   @Override
-  protected void validateWithdrawal(double amount) throws InsufficientFundsException {
+  public double withdraw(double amount) throws Exception {
     if (this.getBalance() - amount < this.minimumBalance) {
       throw new InsufficientFundsException(
           "Transaction Failed: Insufficient funds to maintain minimum balance. Current Balance: "
@@ -90,5 +75,6 @@ public class SavingsAccount extends Account {
               + ", Minimum Required Balance: "
               + this.minimumBalance);
     }
+    return super.withdraw(amount);
   }
 }

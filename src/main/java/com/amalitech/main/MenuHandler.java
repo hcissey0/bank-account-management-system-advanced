@@ -32,17 +32,17 @@ public class MenuHandler {
     int choice;
     do {
       MenuDisplay.showAccountsMenu();
-      choice = inputReader.readInt("Enter your choice: ", 1, 5);
+      choice = inputReader.readInt("Enter your choice: ", 0, 4);
 
       switch (choice) {
         case 1 -> AccountOperations.createAccount(accountManager, customerManager, inputReader);
         case 2 -> accountManager.viewAllAccounts(inputReader);
         case 3 -> AccountOperations.findAndDisplayAccount(accountManager, inputReader);
         case 4 -> AccountOperations.displayAccountSummary(accountManager, inputReader);
-        case 5 -> {}
+        case 0 -> {}
         default -> System.out.println("Invalid Input. Try Again!");
       }
-    } while (choice != 5);
+    } while (choice != 0);
   }
 
   // ==================== CUSTOMERS MENU ====================
@@ -51,16 +51,16 @@ public class MenuHandler {
     int choice;
     do {
       MenuDisplay.showCustomersMenu();
-      choice = inputReader.readInt("Enter your choice: ", 1, 4);
+      choice = inputReader.readInt("Enter your choice: ", 0, 3);
 
       switch (choice) {
         case 1 -> CustomerOperations.addCustomer(customerManager, inputReader);
         case 2 -> customerManager.viewAllCustomers(inputReader);
         case 3 -> CustomerOperations.findAndDisplayCustomer(customerManager, inputReader);
-        case 4 -> {}
+        case 0 -> {}
         default -> System.out.println("Invalid Input. Try Again!");
       }
-    } while (choice != 4);
+    } while (choice != 0);
   }
 
   // ==================== TRANSACTIONS MENU ====================
@@ -72,7 +72,7 @@ public class MenuHandler {
     int choice;
     do {
       MenuDisplay.showTransactionsMenu();
-      choice = inputReader.readInt("Enter your choice: ", 1, 4);
+      choice = inputReader.readInt("Enter your choice: ", 0, 3);
 
       switch (choice) {
         case 1 ->
@@ -80,10 +80,10 @@ public class MenuHandler {
                 accountManager, transactionManager, inputReader);
         case 2 -> transactionManager.viewAllTransactions(inputReader);
         case 3 -> TransactionOperations.viewTransactionHistory(transactionManager, inputReader);
-        case 4 -> {}
+        case 0 -> {}
         default -> System.out.println("Invalid Input. Try Again!");
       }
-    } while (choice != 4);
+    } while (choice != 0);
   }
 
   // ==================== REPORTS MENU ====================
@@ -95,16 +95,16 @@ public class MenuHandler {
     int choice;
     do {
       MenuDisplay.showReportsMenu();
-      choice = inputReader.readInt("Enter your choice: ", 1, 3);
+      choice = inputReader.readInt("Enter your choice: ", 0, 2);
 
       switch (choice) {
         case 1 ->
             ReportOperations.generateBankStatement(accountManager, transactionManager, inputReader);
         case 2 -> ReportOperations.displayBankSummary(accountManager, inputReader);
-        case 3 -> {}
+        case 0 -> {}
         default -> System.out.println("Invalid Input. Try Again!");
       }
-    } while (choice != 3);
+    } while (choice != 0);
   }
 
   // ==================== DATA MANAGEMENT MENU ====================
@@ -117,7 +117,7 @@ public class MenuHandler {
     int choice;
     do {
       MenuDisplay.showDataManagementMenu();
-      choice = inputReader.readInt("Enter your choice: ", 1, 3);
+      choice = inputReader.readInt("Enter your choice: ", 0, 2);
 
       switch (choice) {
         case 1 -> {
@@ -132,9 +132,9 @@ public class MenuHandler {
           }
           inputReader.waitForEnter();
         }
-        case 3 -> {}
+        case 0 -> {}
         default -> System.out.println("Invalid Input. Try Again!");
       }
-    } while (choice != 3);
+    } while (choice != 0);
   }
 }

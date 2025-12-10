@@ -25,7 +25,7 @@ public class MenuDisplay {
     System.out.println("2. View All Accounts");
     System.out.println("3. Find Account");
     System.out.println("4. View Account Summary");
-    System.out.println("5. Back to Main Menu");
+    System.out.println("0. Back to Main Menu");
     System.out.println();
   }
 
@@ -36,7 +36,7 @@ public class MenuDisplay {
     System.out.println("1. Add Customer");
     System.out.println("2. View All Customers");
     System.out.println("3. Find Customer");
-    System.out.println("4. Back to Main Menu");
+    System.out.println("0. Back to Main Menu");
     System.out.println();
   }
 
@@ -47,7 +47,7 @@ public class MenuDisplay {
     System.out.println("1. Process Transaction");
     System.out.println("2. View All Transactions");
     System.out.println("3. View Account Transactions");
-    System.out.println("4. Back to Main Menu");
+    System.out.println("0. Back to Main Menu");
     System.out.println();
   }
 
@@ -57,7 +57,7 @@ public class MenuDisplay {
     System.out.println("+------------------------+");
     System.out.println("1. Generate Bank Statement");
     System.out.println("2. View Bank Summary");
-    System.out.println("3. Back to Main Menu");
+    System.out.println("0. Back to Main Menu");
     System.out.println();
   }
 
@@ -67,7 +67,7 @@ public class MenuDisplay {
     System.out.println("+---------------------+");
     System.out.println("1. Save All Data");
     System.out.println("2. Reload Data");
-    System.out.println("3. Back to Main Menu");
+    System.out.println("0. Back to Main Menu");
     System.out.println();
   }
 }

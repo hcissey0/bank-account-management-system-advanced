@@ -1,7 +1,7 @@
 package com.amalitech.main;
 
 import com.amalitech.exceptions.AccountNotFoundException;
-import com.amalitech.exceptions.BankException;
+import com.amalitech.exceptions.InvalidInputException;
 import com.amalitech.models.*;
 import com.amalitech.services.*;
 import com.amalitech.utils.InputReader;
@@ -19,10 +19,12 @@ public class TransactionOperations {
     String accountNumber;
     while (true) {
       accountNumber = inputReader.readString("\nEnter Account number: ");
-      if (ValidationUtils.isValidAccountNumber(accountNumber)) {
+      try {
+        ValidationUtils.validateAccountNumber(accountNumber);
         break;
+      } catch (InvalidInputException e) {
+        System.out.println(e.getMessage());
       }
-      System.out.println("Invalid Account Number format. Expected format: ACCxxx (e.g., ACC001)");
     }
 
     try {
@@ -45,10 +47,12 @@ public class TransactionOperations {
     String accountNumber;
     while (true) {
       accountNumber = inputReader.readString("\nEnter Account number: ");
-      if (ValidationUtils.isValidAccountNumber(accountNumber)) {
+      try {
+        ValidationUtils.validateAccountNumber(accountNumber);
         break;
+      } catch (InvalidInputException e) {
+        System.out.println(e.getMessage());
       }
-      System.out.println("Invalid Account Number format. Expected format: ACCxxx (e.g., ACC001)");
     }
     transactionManager.viewTransactionsByAccount(accountNumber, inputReader);
   }
@@ -117,7 +121,7 @@ public class TransactionOperations {
       transactionManager.saveTransactions();
       System.out.printf(
           "%s Successful! New Balance: $%.2f\n", transaction.getType(), account.getBalance());
-    } catch (BankException e) {
+    } catch (Exception e) {
       System.out.println("Transaction failed: " + e.getMessage());
     }
   }

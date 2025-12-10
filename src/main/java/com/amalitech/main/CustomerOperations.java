@@ -1,5 +1,6 @@
 package com.amalitech.main;
 
+import com.amalitech.exceptions.InvalidInputException;
 import com.amalitech.models.*;
 import com.amalitech.services.CustomerManager;
 import com.amalitech.utils.InputReader;
@@ -24,10 +25,12 @@ public class CustomerOperations {
     String customerId;
     while (true) {
       customerId = inputReader.readString("\nEnter Customer ID: ");
-      if (ValidationUtils.isValidCustomerId(customerId)) {
+      try {
+        ValidationUtils.validateCustomerId(customerId);
         break;
+      } catch (InvalidInputException e) {
+        System.out.println(e.getMessage());
       }
-      System.out.println("Invalid Customer ID format. Expected format: CUSxxx (e.g., CUS001)");
     }
     Customer customer = customerManager.findCustomer(customerId);
     if (customer != null) {
@@ -42,28 +45,34 @@ public class CustomerOperations {
     String name;
     while (true) {
       name = inputReader.readString("\nEnter customer name: ");
-      if (ValidationUtils.isValidName(name)) {
+      try {
+        ValidationUtils.validateName(name);
         break;
+      } catch (InvalidInputException e) {
+        System.out.println(e.getMessage());
       }
-      System.out.println("Invalid name. Please use only letters and spaces.");
     }
 
     int age;
     while (true) {
       age = inputReader.readInt("Enter customer age: ", 0, 150);
-      if (ValidationUtils.isValidAge(age)) {
+      try {
+        ValidationUtils.validateAge(age);
         break;
+      } catch (InvalidInputException e) {
+        System.out.println(e.getMessage());
       }
-      System.out.println("Invalid age. Must be between 18 and 120.");
     }
 
     String contact;
     while (true) {
       contact = inputReader.readString("Enter customer contact (email): ");
-      if (ValidationUtils.isValidEmail(contact)) {
+      try {
+        ValidationUtils.validateEmail(contact);
         break;
+      } catch (InvalidInputException e) {
+        System.out.println(e.getMessage());
       }
-      System.out.println("Invalid email format. Please enter a valid email address.");
     }
 
     String address = inputReader.readString("Enter customer address: ");

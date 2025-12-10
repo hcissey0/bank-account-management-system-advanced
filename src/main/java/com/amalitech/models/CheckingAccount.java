@@ -1,6 +1,6 @@
 package com.amalitech.models;
 
-import com.amalitech.exceptions.InsufficientFundsException;
+import com.amalitech.exceptions.OverdraftLimitExceededException;
 
 /** Represents a checking account with overdraft protection and monthly fees. */
 public class CheckingAccount extends Account {
@@ -41,20 +41,6 @@ public class CheckingAccount extends Account {
     }
   }
 
-  /**
-   * Withdraws the specified amount, allowing overdraft up to the limit.
-   *
-   * @param amount the amount to withdraw
-   * @return the new balance if successful, or -1 if overdraft limit exceeded
-   */
-  @java.lang.Override
-  public double withdraw(double amount) {
-    if (amount - this.getBalance() < this.overdraftLimit) {
-      return super.withdraw(amount);
-    }
-    return -1;
-  }
-
   @java.lang.Override
   public void displayAccountDetails() {
     System.out.println("+-----------------+");
@@ -75,15 +61,17 @@ public class CheckingAccount extends Account {
   }
 
   /**
-   * Validates that a withdrawal amount does not exceed the overdraft limit.
+   * Withdraws amount from the account if it does not exceed the overdraft limit.
    *
    * @param amount the amount to withdraw
-   * @throws InsufficientFundsException if the withdrawal would exceed the overdraft limit
+   * @return the new balance
+   * @throws Exception if the withdrawal would exceed the overdraft limit
    */
   @Override
-  protected void validateWithdrawal(double amount) throws InsufficientFundsException {
+  public double withdraw(double amount) throws Exception {
     if (amount - this.getBalance() > this.overdraftLimit) {
-      throw new InsufficientFundsException("Withdrawal amount exceeds overdraft limit.");
+      throw new OverdraftLimitExceededException("Withdrawal amount exceeds overdraft limit.");
     }
+    return super.withdraw(amount);
   }
 }

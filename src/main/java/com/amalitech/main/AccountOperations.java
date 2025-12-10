@@ -1,6 +1,7 @@
 package com.amalitech.main;
 
 import com.amalitech.exceptions.AccountNotFoundException;
+import com.amalitech.exceptions.InvalidInputException;
 import com.amalitech.models.*;
 import com.amalitech.services.*;
 import com.amalitech.utils.InputReader;
@@ -45,10 +46,12 @@ public class AccountOperations {
     String accountNumber;
     while (true) {
       accountNumber = inputReader.readString("\nEnter Account number: ");
-      if (ValidationUtils.isValidAccountNumber(accountNumber)) {
+      try {
+        ValidationUtils.validateAccountNumber(accountNumber);
         break;
+      } catch (InvalidInputException e) {
+        System.out.println(e.getMessage());
       }
-      System.out.println("Invalid Account Number format. Expected format: ACCxxx (e.g., ACC001)");
     }
     try {
       Account account = accountManager.findAccount(accountNumber);
