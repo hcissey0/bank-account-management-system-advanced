@@ -8,6 +8,7 @@ public abstract class Customer {
   private int age;
   private String contact;
   private String address;
+  private String email;
 
   Customer() {
     this.customerId = generateCustomerId();
@@ -67,6 +68,14 @@ public abstract class Customer {
 
   public void setContact(String contact) {
     this.contact = contact;
+  }
+
+  public String getEmail() {
+    return email;
+  }
+
+  public void setEmail(String email) {
+    this.email = email;
   }
 
   /** Displays the customer's details to the console. */

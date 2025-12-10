@@ -66,9 +66,20 @@ public class CustomerOperations {
 
     String contact;
     while (true) {
-      contact = inputReader.readString("Enter customer contact (email): ");
+      contact = inputReader.readString("Enter customer contact (phone number): ");
       try {
-        ValidationUtils.validateEmail(contact);
+        ValidationUtils.validatePhoneNumber(contact);
+        break;
+      } catch (InvalidInputException e) {
+        System.out.println(e.getMessage());
+      }
+    }
+
+    String email;
+    while (true) {
+      email = inputReader.readString("Enter customer email: ");
+      try {
+        ValidationUtils.validateEmail(email);
         break;
       } catch (InvalidInputException e) {
         System.out.println(e.getMessage());
@@ -83,7 +94,7 @@ public class CustomerOperations {
             + "1. Regular Customer (Standard Banking Services)\n"
             + "2. Premium Customer (Enhanced Benefits, Minimum Balance $10,000)");
     return inputReader.readInt("\nSelect type (1-2): ", 1, 2) == 1
-        ? new RegularCustomer(name, age, contact, address)
-        : new PremiumCustomer(name, age, contact, address);
+        ? new RegularCustomer(name, age, contact, address, email)
+        : new PremiumCustomer(name, age, contact, address, email);
   }
 }

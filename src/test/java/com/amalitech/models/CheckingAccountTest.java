@@ -13,7 +13,7 @@ class CheckingAccountTest {
 
   @BeforeEach
   void setUp() {
-    customer = new RegularCustomer("Jane Doe", 25, "0987654321", "456 Elm St");
+    customer = new RegularCustomer("Jane Doe", 25, "0987654321", "456 Elm St", "jane@example.com");
     checkingAccount = new CheckingAccount(customer, 100.0);
   }
 

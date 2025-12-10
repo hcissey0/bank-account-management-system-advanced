@@ -38,7 +38,7 @@ class AccountTest {
 
   @BeforeEach
   void setUp() {
-    customer = new RegularCustomer("John Doe", 30, "1234567890", "123 Main St");
+    customer = new RegularCustomer("John Doe", 30, "1234567890", "123 Main St", "john@example.com");
     account = new TestAccount(customer);
   }
 
