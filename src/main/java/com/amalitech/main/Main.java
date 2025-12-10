@@ -23,9 +23,10 @@ public class Main {
       int choice;
       do {
         displayMainMenu();
-        choice = inputReader.readInt("Enter your choice: ", 1, 10);
-        handleMenuChoice(choice, accountManager, transactionManager, customerManager, inputReader);
-      } while (choice != 10);
+        choice = inputReader.readInt("Enter your choice: ", 1, 7);
+        handleMainMenuChoice(
+            choice, accountManager, transactionManager, customerManager, inputReader);
+      } while (choice != 7);
 
       // Save all data before exit
       saveAllData(accountManager, customerManager, transactionManager);
@@ -33,6 +34,192 @@ public class Main {
 
     System.out.println("Thank you for using Bank Account Management System!\nGoodbye!");
   }
+
+  // ==================== MAIN MENU ====================
+
+  private static void displayMainMenu() {
+    System.out.println("\n+===================+");
+    System.out.println("|    MAIN MENU      |");
+    System.out.println("+===================+");
+    System.out.println("1. Manage Accounts");
+    System.out.println("2. Manage Customers");
+    System.out.println("3. Manage Transactions");
+    System.out.println("4. Reports & Statements");
+    System.out.println("5. Data Management");
+    System.out.println("6. Run Tests");
+    System.out.println("7. Exit");
+    System.out.println();
+  }
+
+  private static void handleMainMenuChoice(
+      int choice,
+      AccountManager accountManager,
+      TransactionManager transactionManager,
+      CustomerManager customerManager,
+      InputReader inputReader) {
+    switch (choice) {
+      case 1 -> showAccountsMenu(accountManager, customerManager, inputReader);
+      case 2 -> showCustomersMenu(customerManager, inputReader);
+      case 3 -> showTransactionsMenu(accountManager, transactionManager, inputReader);
+      case 4 -> showReportsMenu(accountManager, transactionManager, inputReader);
+      case 5 ->
+          showDataManagementMenu(accountManager, customerManager, transactionManager, inputReader);
+      case 6 -> runTests(inputReader);
+      case 7 -> {}
+      default -> System.out.println("Invalid Input. Try Again!");
+    }
+  }
+
+  // ==================== ACCOUNTS MENU ====================
+
+  private static void showAccountsMenu(
+      AccountManager accountManager, CustomerManager customerManager, InputReader inputReader) {
+    int choice;
+    do {
+      System.out.println("\n+-------------------+");
+      System.out.println("|  ACCOUNTS MENU    |");
+      System.out.println("+-------------------+");
+      System.out.println("1. Create Account");
+      System.out.println("2. View All Accounts");
+      System.out.println("3. Find Account");
+      System.out.println("4. View Account Summary");
+      System.out.println("5. Back to Main Menu");
+      System.out.println();
+
+      choice = inputReader.readInt("Enter your choice: ", 1, 5);
+
+      switch (choice) {
+        case 1 -> createAccount(accountManager, customerManager, inputReader);
+        case 2 -> accountManager.viewAllAccounts(inputReader);
+        case 3 -> findAndDisplayAccount(accountManager, inputReader);
+        case 4 -> displayAccountSummary(accountManager, inputReader);
+        case 5 -> {}
+        default -> System.out.println("Invalid Input. Try Again!");
+      }
+    } while (choice != 5);
+  }
+
+  // ==================== CUSTOMERS MENU ====================
+
+  private static void showCustomersMenu(CustomerManager customerManager, InputReader inputReader) {
+    int choice;
+    do {
+      System.out.println("\n+-------------------+");
+      System.out.println("|  CUSTOMERS MENU   |");
+      System.out.println("+-------------------+");
+      System.out.println("1. Add Customer");
+      System.out.println("2. View All Customers");
+      System.out.println("3. Find Customer");
+      System.out.println("4. Back to Main Menu");
+      System.out.println();
+
+      choice = inputReader.readInt("Enter your choice: ", 1, 4);
+
+      switch (choice) {
+        case 1 -> addCustomer(customerManager, inputReader);
+        case 2 -> customerManager.viewAllCustomers(inputReader);
+        case 3 -> findAndDisplayCustomer(customerManager, inputReader);
+        case 4 -> {}
+        default -> System.out.println("Invalid Input. Try Again!");
+      }
+    } while (choice != 4);
+  }
+
+  // ==================== TRANSACTIONS MENU ====================
+
+  private static void showTransactionsMenu(
+      AccountManager accountManager,
+      TransactionManager transactionManager,
+      InputReader inputReader) {
+    int choice;
+    do {
+      System.out.println("\n+---------------------+");
+      System.out.println("|  TRANSACTIONS MENU  |");
+      System.out.println("+---------------------+");
+      System.out.println("1. Process Transaction");
+      System.out.println("2. View All Transactions");
+      System.out.println("3. View Account Transactions");
+      System.out.println("4. Back to Main Menu");
+      System.out.println();
+
+      choice = inputReader.readInt("Enter your choice: ", 1, 4);
+
+      switch (choice) {
+        case 1 -> processTransaction(accountManager, transactionManager, inputReader);
+        case 2 -> transactionManager.viewAllTransactions(inputReader);
+        case 3 -> viewTransactionHistory(transactionManager, inputReader);
+        case 4 -> {}
+        default -> System.out.println("Invalid Input. Try Again!");
+      }
+    } while (choice != 4);
+  }
+
+  // ==================== REPORTS MENU ====================
+
+  private static void showReportsMenu(
+      AccountManager accountManager,
+      TransactionManager transactionManager,
+      InputReader inputReader) {
+    int choice;
+    do {
+      System.out.println("\n+------------------------+");
+      System.out.println("| REPORTS & STATEMENTS   |");
+      System.out.println("+------------------------+");
+      System.out.println("1. Generate Bank Statement");
+      System.out.println("2. View Bank Summary");
+      System.out.println("3. Back to Main Menu");
+      System.out.println();
+
+      choice = inputReader.readInt("Enter your choice: ", 1, 3);
+
+      switch (choice) {
+        case 1 -> generateBankStatement(accountManager, transactionManager, inputReader);
+        case 2 -> displayBankSummary(accountManager, inputReader);
+        case 3 -> {}
+        default -> System.out.println("Invalid Input. Try Again!");
+      }
+    } while (choice != 3);
+  }
+
+  // ==================== DATA MANAGEMENT MENU ====================
+
+  private static void showDataManagementMenu(
+      AccountManager accountManager,
+      CustomerManager customerManager,
+      TransactionManager transactionManager,
+      InputReader inputReader) {
+    int choice;
+    do {
+      System.out.println("\n+---------------------+");
+      System.out.println("|  DATA MANAGEMENT    |");
+      System.out.println("+---------------------+");
+      System.out.println("1. Save All Data");
+      System.out.println("2. Reload Data");
+      System.out.println("3. Back to Main Menu");
+      System.out.println();
+
+      choice = inputReader.readInt("Enter your choice: ", 1, 3);
+
+      switch (choice) {
+        case 1 -> {
+          saveAllData(accountManager, customerManager, transactionManager);
+          inputReader.waitForEnter();
+        }
+        case 2 -> {
+          System.out.println("\nData reload requires application restart.");
+          System.out.println("Current session data will be lost.");
+          if (inputReader.readString("Continue? (y/n): ").toLowerCase().startsWith("y")) {
+            System.out.println("Please restart the application to reload data.");
+          }
+          inputReader.waitForEnter();
+        }
+        case 3 -> {}
+        default -> System.out.println("Invalid Input. Try Again!");
+      }
+    } while (choice != 3);
+  }
+
+  // ==================== UTILITY METHODS ====================
 
   private static void saveAllData(
       AccountManager accountManager,
@@ -45,38 +232,55 @@ public class Main {
     System.out.println("Data saved successfully!");
   }
 
-  private static void displayMainMenu() {
-    System.out.println("\n+-----------+\n| MAIN MENU |\n+-----------+");
-    System.out.println(
-        "1. Create Account\n2. View Accounts\n3. View Customers\n4. Process Transaction");
-    System.out.println(
-        "5. View Transaction History for an account\n6. View all Transaction Histories");
-    System.out.println("7. Generate Bank Statement\n8. Run Tests\n9. Save Data\n10. Exit\n");
+  // ==================== ACCOUNT OPERATIONS ====================
+
+  private static void findAndDisplayAccount(
+      AccountManager accountManager, InputReader inputReader) {
+    System.out.println("\n+---------------+\n| FIND ACCOUNT  |\n+---------------+");
+    String accountNumber = inputReader.readString("\nEnter Account number: ");
+    try {
+      Account account = accountManager.findAccount(accountNumber);
+      account.displayAccountDetails();
+    } catch (AccountNotFoundException e) {
+      System.out.println(e.getMessage());
+    }
+    inputReader.waitForEnter();
   }
 
-  private static void handleMenuChoice(
-      int choice,
-      AccountManager accountManager,
-      TransactionManager transactionManager,
-      CustomerManager customerManager,
-      InputReader inputReader) {
-    switch (choice) {
-      case 1 -> createAccount(accountManager, customerManager, inputReader);
-      case 2 -> accountManager.viewAllAccounts(inputReader);
-      case 3 -> customerManager.viewAllCustomers(inputReader);
-      case 4 -> processTransaction(accountManager, transactionManager, inputReader);
-      case 5 -> viewTransactionHistory(transactionManager, inputReader);
-      case 6 -> transactionManager.viewAllTransactions(inputReader);
-      case 7 -> generateBankStatement(accountManager, transactionManager, inputReader);
-      case 8 -> runTests(inputReader);
-      case 9 -> {
-        saveAllData(accountManager, customerManager, transactionManager);
-        inputReader.waitForEnter();
-      }
-      case 10 -> {}
-      default -> System.out.println("Invalid Input. Try Again!");
-    }
+  private static void displayAccountSummary(
+      AccountManager accountManager, InputReader inputReader) {
+    System.out.println("\n+------------------+\n| ACCOUNT SUMMARY  |\n+------------------+");
+    System.out.printf("Total Accounts: %d\n", accountManager.getAccountCount());
+    System.out.printf("Total Bank Balance: $%.2f\n", accountManager.getTotalBalance());
+    inputReader.waitForEnter();
   }
+
+  // ==================== CUSTOMER OPERATIONS ====================
+
+  private static void addCustomer(CustomerManager customerManager, InputReader inputReader) {
+    System.out.println("\n+---------------+\n| ADD CUSTOMER  |\n+---------------+");
+    Customer customer = createCustomer(inputReader);
+    customerManager.addCustomer(customer);
+    customerManager.saveCustomers();
+    System.out.println("Customer added successfully!");
+    customer.displayCustomerDetails();
+    inputReader.waitForEnter();
+  }
+
+  private static void findAndDisplayCustomer(
+      CustomerManager customerManager, InputReader inputReader) {
+    System.out.println("\n+----------------+\n| FIND CUSTOMER  |\n+----------------+");
+    String customerId = inputReader.readString("\nEnter Customer ID: ");
+    Customer customer = customerManager.findCustomer(customerId);
+    if (customer != null) {
+      customer.displayCustomerDetails();
+    } else {
+      System.out.println("Customer not found!");
+    }
+    inputReader.waitForEnter();
+  }
+
+  // ==================== TRANSACTION OPERATIONS ====================
 
   private static void viewTransactionHistory(
       TransactionManager transactionManager, InputReader inputReader) {
@@ -87,6 +291,16 @@ public class Main {
             + "+--------------------------+");
     String accountNumber = inputReader.readString("\nEnter Account number: ");
     transactionManager.viewTransactionsByAccount(accountNumber, inputReader);
+  }
+
+  // ==================== REPORT OPERATIONS ====================
+
+  private static void displayBankSummary(AccountManager accountManager, InputReader inputReader) {
+    System.out.println("\n+----------------+\n| BANK SUMMARY   |\n+----------------+");
+    System.out.printf("\nTotal Accounts: %d\n", accountManager.getAccountCount());
+    System.out.printf("Total Bank Balance: $%.2f\n", accountManager.getTotalBalance());
+    System.out.println("\nPress Enter to continue...");
+    inputReader.waitForEnter();
   }
 
   private static void processTransaction(
