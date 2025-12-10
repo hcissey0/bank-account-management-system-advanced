@@ -1,4 +1,4 @@
-package com.amalitech.customers;
+package com.amalitech.models;
 
 /** Represents a regular bank customer with standard banking services. */
 public class RegularCustomer extends Customer {

@@ -1,7 +1,7 @@
-package com.amalitech.customers;
+package com.amalitech.services;
 
 import static org.junit.jupiter.api.Assertions.*;
-
+import com.amalitech.models.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

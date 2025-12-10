@@ -20,7 +20,7 @@ public class CustomTestRunner {
     LauncherDiscoveryRequest request =
         LauncherDiscoveryRequestBuilder.request()
             .selectors(
-                selectPackage("com.amalitech.accounts"),
+                selectPackage("com.amalitech.models"),
                 selectPackage("com.amalitech.customers"),
                 selectPackage("com.amalitech.transactions"))
             .build();

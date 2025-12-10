@@ -1,4 +1,4 @@
-package com.amalitech.customers;
+package com.amalitech.models;
 
 /** Represents a premium bank customer with waived fees and minimum balance requirements. */
 public class PremiumCustomer extends Customer {
