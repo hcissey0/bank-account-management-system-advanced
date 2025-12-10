@@ -2,8 +2,8 @@ package com.amalitech.services;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.amalitech.models.*;
 import com.amalitech.exceptions.AccountNotFoundException;
+import com.amalitech.models.*;
 import com.amalitech.utils.InputReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -88,17 +88,18 @@ class AccountManagerTest {
 
   @Test
   void testAddAccountLimit() {
-    // Fill the account manager to the maximum capacity (50)
+    // With HashMap, there's no fixed capacity limit
+    // Verify we can add more than the old array limit of 50
     for (int i = 0; i < 50; i++) {
       accountManager.addAccount(new CheckingAccount(customer, 100.0));
     }
     assertEquals(50, accountManager.getAccountCount());
 
-    // Attempt to add the 51st account
+    // Add the 51st account - should succeed with HashMap
     accountManager.addAccount(new CheckingAccount(customer, 100.0));
 
-    // Verify that the count did not increase
-    assertEquals(50, accountManager.getAccountCount());
+    // Verify that the count increased beyond old limit
+    assertEquals(51, accountManager.getAccountCount());
   }
 
   @Test

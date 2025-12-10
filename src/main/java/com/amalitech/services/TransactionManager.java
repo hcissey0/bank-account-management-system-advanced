@@ -1,54 +1,54 @@
 package com.amalitech.services;
 
+import com.amalitech.models.*;
 import com.amalitech.utils.ConsoleTablePrinter;
 import com.amalitech.utils.InputReader;
 import com.amalitech.utils.TablePrinter;
-import com.amalitech.models.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
-/** Manages a collection of transactions with fixed capacity. */
+/** Manages a collection of transactions using ArrayList. */
 public class TransactionManager {
 
-  private static final int MAX_TRANSACTIONS = 200;
   private static final String DEPOSIT_TYPE = "DEPOSIT";
   private static final String WITHDRAWAL_TYPE = "WITHDRAWAL";
 
-  private final Transaction[] transactions;
-  private int transactionCount;
+  private final List<Transaction> transactions;
   private final TablePrinter printer;
 
   public TransactionManager() {
-    this.transactions = new Transaction[MAX_TRANSACTIONS];
-    this.transactionCount = 0;
+    this.transactions = new ArrayList<>();
     this.printer = new ConsoleTablePrinter();
   }
 
-  /** Adds a transaction to the history if capacity allows. */
+  /** Adds a transaction to the history. */
   public void addTransaction(Transaction transaction) {
     if (transaction == null) {
       System.out.println("Attempted to add null transaction");
       return;
     }
-
-    if (transactionCount >= MAX_TRANSACTIONS) {
-      System.out.println("Transaction limit reached. Cannot add more transactions.");
-      return;
-    }
-
-    this.transactions[this.transactionCount++] = transaction;
+    transactions.add(transaction);
   }
 
-  /** Calculates the total amount of all deposits. */
+  /** Calculates the total amount of all deposits using Stream API. */
   public double calculateTotalDeposits() {
-    return calculateTotalByType(DEPOSIT_TYPE);
+    return transactions.stream()
+        .filter(t -> t.getType().equalsIgnoreCase(DEPOSIT_TYPE))
+        .mapToDouble(Transaction::getAmount)
+        .sum();
   }
 
-  /** Calculates the total amount of all withdrawals. */
+  /** Calculates the total amount of all withdrawals using Stream API. */
   public double calculateTotalWithdrawals() {
-    return calculateTotalByType(WITHDRAWAL_TYPE);
+    return transactions.stream()
+        .filter(t -> t.getType().equalsIgnoreCase(WITHDRAWAL_TYPE))
+        .mapToDouble(Transaction::getAmount)
+        .sum();
   }
 
   public int getTransactionCount() {
-    return this.transactionCount;
+    return transactions.size();
   }
 
   /**
@@ -57,22 +57,24 @@ public class TransactionManager {
    * @param inputReader used to pause execution after display
    */
   public void viewAllTransactions(InputReader inputReader) {
-    if (isTransactionListEmpty(inputReader)) {
+    if (transactions.isEmpty()) {
+      System.out.println("No transactions available.");
+      inputReader.waitForEnter();
       return;
     }
 
     String[] headers = createTransactionHeaders();
-    String[][] data = buildTransactionData(transactions, transactionCount);
+    String[][] data = buildTransactionData(transactions);
 
     printer.printTable(headers, data);
     displayTransactionSummary(
-        transactionCount, calculateTotalDeposits(), calculateTotalWithdrawals());
+        getTransactionCount(), calculateTotalDeposits(), calculateTotalWithdrawals());
 
-    waitForUserInput(inputReader);
+    inputReader.waitForEnter();
   }
 
   /**
-   * Displays transactions for a specific account.
+   * Displays transactions for a specific account using Stream API.
    *
    * @param accountNumber the account to filter by
    * @param inputReader used to pause execution after display
@@ -84,98 +86,77 @@ public class TransactionManager {
       return;
     }
 
-    Transaction[] accountTransactions = filterTransactionsByAccount(accountNumber);
-    int count = countNonNullTransactions(accountTransactions);
+    List<Transaction> accountTransactions = getTransactionsListForAccount(accountNumber);
 
-    if (count == 0) {
+    if (accountTransactions.isEmpty()) {
       System.out.println("No transactions recorded for account: " + accountNumber);
       inputReader.waitForEnter();
       return;
     }
 
     String[] headers = createTransactionHeaders();
-    String[][] data = buildTransactionData(accountTransactions, count);
+    String[][] data = buildTransactionData(accountTransactions);
 
     printer.printTable(headers, data);
 
-    double totalDeposits = calculateTotalByTypeForAccount(accountNumber, DEPOSIT_TYPE);
-    double totalWithdrawals = calculateTotalByTypeForAccount(accountNumber, WITHDRAWAL_TYPE);
-    displayTransactionSummary(count, totalDeposits, totalWithdrawals);
+    double totalDeposits = getTotalDeposits(accountNumber);
+    double totalWithdrawals = getTotalWithdrawals(accountNumber);
+    displayTransactionSummary(accountTransactions.size(), totalDeposits, totalWithdrawals);
 
-    waitForUserInput(inputReader);
+    inputReader.waitForEnter();
   }
 
-  /** Returns all transactions for the specified account. */
+  /**
+   * Returns all transactions for the specified account as an array (for backward compatibility).
+   */
   public Transaction[] getTransactionsForAccount(String accountNumber) {
-    return filterTransactionsByAccount(accountNumber);
+    return getTransactionsListForAccount(accountNumber).toArray(new Transaction[0]);
   }
 
-  /** Returns total deposits for the specified account. */
+  /** Returns all transactions for the specified account as a List using Stream API. */
+  private List<Transaction> getTransactionsListForAccount(String accountNumber) {
+    return transactions.stream()
+        .filter(t -> t.getAccountNumber().equals(accountNumber))
+        .collect(Collectors.toList());
+  }
+
+  /** Returns total deposits for the specified account using Stream API. */
   public double getTotalDeposits(String accountNumber) {
-    return calculateTotalByTypeForAccount(accountNumber, DEPOSIT_TYPE);
+    return transactions.stream()
+        .filter(t -> t.getAccountNumber().equals(accountNumber))
+        .filter(t -> t.getType().equalsIgnoreCase(DEPOSIT_TYPE))
+        .mapToDouble(Transaction::getAmount)
+        .sum();
   }
 
-  /** Returns total withdrawals for the specified account. */
+  /** Returns total withdrawals for the specified account using Stream API. */
   public double getTotalWithdrawals(String accountNumber) {
-    return calculateTotalByTypeForAccount(accountNumber, WITHDRAWAL_TYPE);
+    return transactions.stream()
+        .filter(t -> t.getAccountNumber().equals(accountNumber))
+        .filter(t -> t.getType().equalsIgnoreCase(WITHDRAWAL_TYPE))
+        .mapToDouble(Transaction::getAmount)
+        .sum();
   }
 
   // ==================== HELPER METHODS ====================
-
-  private double calculateTotalByType(String type) {
-    double total = 0;
-    for (int i = 0; i < transactionCount; i++) {
-      if (transactions[i] != null && transactions[i].getType().equalsIgnoreCase(type)) {
-        total += transactions[i].getAmount();
-      }
-    }
-    return total;
-  }
-
-  private Transaction[] filterTransactionsByAccount(String accountNumber) {
-    Transaction[] filtered = new Transaction[transactionCount];
-    int index = 0;
-
-    for (int i = transactionCount - 1; i >= 0; i--) {
-      if (transactions[i] != null && transactions[i].getAccountNumber().equals(accountNumber)) {
-        filtered[index++] = transactions[i];
-      }
-    }
-
-    return filtered;
-  }
-
-  private int countNonNullTransactions(Transaction[] transactionArray) {
-    int count = 0;
-    for (Transaction tx : transactionArray) {
-      if (tx != null) {
-        count++;
-      }
-    }
-    return count;
-  }
 
   private String[] createTransactionHeaders() {
     return new String[] {"TRANSACTION ID", "ACCOUNT NUMBER", "TYPE", "AMOUNT", "DATE"};
   }
 
-  private String[][] buildTransactionData(Transaction[] transactionArray, int count) {
-    String[][] data = new String[count][5];
-    int rowIndex = 0;
-
-    for (int i = 0; i < transactionArray.length && rowIndex < count; i++) {
-      Transaction tx = transactionArray[i];
-      if (tx != null) {
-        data[rowIndex][0] = tx.getTransactionId();
-        data[rowIndex][1] = tx.getAccountNumber();
-        data[rowIndex][2] = tx.getType().toUpperCase();
-        data[rowIndex][3] = formatAmount(tx.getType(), tx.getAmount());
-        data[rowIndex][4] = tx.getTimestamp();
-        rowIndex++;
-      }
-    }
-
-    return data;
+  /** Builds transaction data using Stream API. */
+  private String[][] buildTransactionData(List<Transaction> transactionList) {
+    return transactionList.stream()
+        .map(
+            tx ->
+                new String[] {
+                  tx.getTransactionId(),
+                  tx.getAccountNumber(),
+                  tx.getType().toUpperCase(),
+                  formatAmount(tx.getType(), tx.getAmount()),
+                  tx.getTimestamp()
+                })
+        .toArray(String[][]::new);
   }
 
   private String formatAmount(String type, double amount) {
@@ -187,30 +168,5 @@ public class TransactionManager {
     System.out.println("Number of transactions: " + count);
     System.out.println(String.format("Total Deposits: $%.2f", totalDeposits));
     System.out.println(String.format("Total Withdrawals: $%.2f", totalWithdrawals));
-  }
-
-  private double calculateTotalByTypeForAccount(String accountNumber, String type) {
-    double total = 0;
-    for (int i = 0; i < transactionCount; i++) {
-      if (transactions[i] != null
-          && transactions[i].getAccountNumber().equals(accountNumber)
-          && transactions[i].getType().equalsIgnoreCase(type)) {
-        total += transactions[i].getAmount();
-      }
-    }
-    return total;
-  }
-
-  private boolean isTransactionListEmpty(InputReader inputReader) {
-    if (transactionCount == 0) {
-      System.out.println("No transactions available.");
-      inputReader.waitForEnter();
-      return true;
-    }
-    return false;
-  }
-
-  private void waitForUserInput(InputReader inputReader) {
-    inputReader.waitForEnter();
   }
 }

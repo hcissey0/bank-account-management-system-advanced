@@ -1,28 +1,29 @@
 package com.amalitech.services;
 
+import com.amalitech.models.*;
 import com.amalitech.utils.ConsoleTablePrinter;
 import com.amalitech.utils.InputReader;
 import com.amalitech.utils.TablePrinter;
-import com.amalitech.models.*;
+import java.util.HashMap;
 
-/** Manages a collection of bank customers with fixed capacity. */
+/** Manages a collection of bank customers using HashMap. */
 public class CustomerManager {
 
-  private final Customer[] customers;
-  private int customerCount;
+  private final HashMap<String, Customer> customers;
   private final TablePrinter printer;
-  private static final int MAX_CUSTOMERS = 100;
 
   public CustomerManager() {
-    this.customers = new Customer[MAX_CUSTOMERS];
-    this.customerCount = 0;
+    this.customers = new HashMap<>();
     this.printer = new ConsoleTablePrinter();
   }
 
-  /** Adds a customer to the system if capacity allows. */
+  /** Adds a customer to the system. */
   public void addCustomer(Customer customer) {
-    if (customerCount < MAX_CUSTOMERS) this.customers[this.customerCount++] = customer;
-    else System.out.println("Customer limit reached.");
+    if (customer == null) {
+      System.out.println("Cannot add null customer.");
+      return;
+    }
+    customers.put(customer.getCustomerId(), customer);
   }
 
   /**
@@ -32,12 +33,7 @@ public class CustomerManager {
    * @return the customer if found, or null if not found
    */
   public Customer findCustomer(String customerId) {
-    for (int i = 0; i < this.customerCount; i++) {
-      if (this.customers[i].getCustomerId().equals(customerId)) {
-        return this.customers[i];
-      }
-    }
-    return null;
+    return customers.get(customerId);
   }
 
   /**
@@ -48,7 +44,7 @@ public class CustomerManager {
   public void viewAllCustomers(InputReader inputReader) {
     String[] headers = {"CUSTOMER ID", "NAME", "TYPE", "AGE", "CONTACT", "ADDRESS"};
 
-    if (customerCount == 0) {
+    if (customers.isEmpty()) {
       System.out.println("No customers available.");
       inputReader.waitForEnter();
       return;
@@ -58,14 +54,13 @@ public class CustomerManager {
 
     printer.printTable(headers, data);
 
-    System.out.println("Total Customers: " + customerCount);
+    System.out.println("Total Customers: " + getCustomerCount());
     inputReader.waitForEnter();
   }
 
-  /** Constructs a 2D array of formatted customer data for tabular display. */
+  /** Constructs a 2D array of formatted customer data for tabular display using Stream API. */
   private String[][] buildTableData() {
-    return java.util.stream.IntStream.range(0, customerCount)
-        .mapToObj(i -> customers[i])
+    return customers.values().stream()
         .map(
             customer ->
                 new String[] {
@@ -80,6 +75,6 @@ public class CustomerManager {
   }
 
   public int getCustomerCount() {
-    return customerCount;
+    return customers.size();
   }
 }
