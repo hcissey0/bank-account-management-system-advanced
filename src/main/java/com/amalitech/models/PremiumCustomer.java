@@ -16,6 +16,17 @@ public class PremiumCustomer extends Customer {
     this.setAddress(address);
   }
 
+  /** Constructor for loading existing customer (for persistence). */
+  public PremiumCustomer(
+      String existingCustomerId, String name, int age, String contact, String address) {
+    super(existingCustomerId);
+    this.minimumBalance = MINIMUM_BALANCE;
+    this.setName(name);
+    this.setAge(age);
+    this.setContact(contact);
+    this.setAddress(address);
+  }
+
   /** Returns true as premium customers have waived monthly fees. */
   public boolean hasWaivedFees() {
     return true;

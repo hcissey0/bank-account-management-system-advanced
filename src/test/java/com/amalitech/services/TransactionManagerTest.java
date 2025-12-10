@@ -11,10 +11,12 @@ import org.junit.jupiter.api.Test;
 class TransactionManagerTest {
 
   private TransactionManager transactionManager;
+  private FilePersistenceService persistenceService;
 
   @BeforeEach
   void setUp() {
-    transactionManager = new TransactionManager();
+    persistenceService = new FilePersistenceService();
+    transactionManager = new TransactionManager(persistenceService);
   }
 
   @Test

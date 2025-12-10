@@ -1,0 +1,3 @@
+accountType,accountNumber,customerId,balance,status
+Checking,ACC001,CUS001,23323.00,Active
+Checking,ACC002,CUS002,23233.00,Active

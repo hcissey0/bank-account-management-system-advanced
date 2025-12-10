@@ -1,9 +1,7 @@
 package com.amalitech.models;
 
-
 import com.amalitech.exceptions.BankException;
 import com.amalitech.exceptions.InvalidAmountException;
-
 
 /**
  * Abstract base class for bank accounts, implementing {@link Transactable} for transactions.
@@ -26,6 +24,19 @@ public abstract class Account implements Transactable {
 
   private static String generateAccountNumber() {
     return "ACC" + String.format("%03d", ++accountCounter);
+  }
+
+  /** Sets the account counter (used for persistence restoration). */
+  public static void setAccountCounter(int counter) {
+    accountCounter = counter;
+  }
+
+  /** Constructor for loading existing account with preserved number (for persistence). */
+  protected Account(String existingAccountNumber, Customer customer, double balance) {
+    this.accountNumber = existingAccountNumber;
+    this.customer = customer;
+    this.balance = balance;
+    this.status = DEFAULT_STATUS;
   }
 
   // getters

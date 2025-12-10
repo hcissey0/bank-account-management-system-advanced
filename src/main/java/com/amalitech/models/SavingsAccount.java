@@ -19,6 +19,13 @@ public class SavingsAccount extends Account {
     this.minimumBalance = MINIMUM_BALANCE;
   }
 
+  /** Constructor for loading existing account (for persistence). */
+  public SavingsAccount(String existingAccountNumber, Customer customer, double balance) {
+    super(existingAccountNumber, customer, balance);
+    this.interestRate = INTEREST_RATE;
+    this.minimumBalance = MINIMUM_BALANCE;
+  }
+
   public double getInterestRate() {
     return interestRate;
   }

@@ -23,6 +23,16 @@ public abstract class Customer {
     return customerCounter;
   }
 
+  /** Sets the customer counter (used for persistence restoration). */
+  public static void setCustomerCounter(int counter) {
+    customerCounter = counter;
+  }
+
+  /** Constructor for loading existing customer with preserved ID (for persistence). */
+  protected Customer(String existingCustomerId) {
+    this.customerId = existingCustomerId;
+  }
+
   public String getCustomerId() {
     return customerId;
   }

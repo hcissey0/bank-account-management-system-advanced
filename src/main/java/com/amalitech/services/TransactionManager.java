@@ -4,11 +4,12 @@ import com.amalitech.models.*;
 import com.amalitech.utils.ConsoleTablePrinter;
 import com.amalitech.utils.InputReader;
 import com.amalitech.utils.TablePrinter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/** Manages a collection of transactions using ArrayList. */
+/** Manages a collection of transactions using ArrayList with file persistence. */
 public class TransactionManager {
 
   private static final String DEPOSIT_TYPE = "DEPOSIT";
@@ -16,10 +17,22 @@ public class TransactionManager {
 
   private final List<Transaction> transactions;
   private final TablePrinter printer;
+  private final FilePersistenceService persistenceService;
 
-  public TransactionManager() {
-    this.transactions = new ArrayList<>();
+  public TransactionManager(FilePersistenceService persistenceService) {
+    this.persistenceService = persistenceService;
     this.printer = new ConsoleTablePrinter();
+    this.transactions = loadTransactionsFromFile();
+  }
+
+  /** Loads transactions from file on initialization. */
+  private List<Transaction> loadTransactionsFromFile() {
+    try {
+      return persistenceService.loadTransactions();
+    } catch (IOException e) {
+      System.err.println("Warning: Could not load transactions from file: " + e.getMessage());
+      return new ArrayList<>();
+    }
   }
 
   /** Adds a transaction to the history. */
@@ -117,7 +130,7 @@ public class TransactionManager {
   private List<Transaction> getTransactionsListForAccount(String accountNumber) {
     return transactions.stream()
         .filter(t -> t.getAccountNumber().equals(accountNumber))
-        .collect(Collectors.toList());
+        .toList();
   }
 
   /** Returns total deposits for the specified account using Stream API. */
@@ -168,5 +181,19 @@ public class TransactionManager {
     System.out.println("Number of transactions: " + count);
     System.out.println(String.format("Total Deposits: $%.2f", totalDeposits));
     System.out.println(String.format("Total Withdrawals: $%.2f", totalWithdrawals));
+  }
+
+  /** Saves all transactions to file. */
+  public void saveTransactions() {
+    try {
+      persistenceService.saveTransactions(transactions);
+    } catch (IOException e) {
+      System.err.println("Error saving transactions: " + e.getMessage());
+    }
+  }
+
+  /** Returns the transactions list for persistence operations. */
+  public List<Transaction> getTransactions() {
+    return transactions;
   }
 }

@@ -11,6 +11,16 @@ public class RegularCustomer extends Customer {
     this.setAddress(address);
   }
 
+  /** Constructor for loading existing customer (for persistence). */
+  public RegularCustomer(
+      String existingCustomerId, String name, int age, String contact, String address) {
+    super(existingCustomerId);
+    this.setName(name);
+    this.setAge(age);
+    this.setContact(contact);
+    this.setAddress(address);
+  }
+
   @java.lang.Override
   public void displayCustomerDetails() {
     System.out.println("+------------------+");

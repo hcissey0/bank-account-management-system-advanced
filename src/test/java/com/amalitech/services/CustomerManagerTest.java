@@ -4,6 +4,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.amalitech.models.*;
 import com.amalitech.utils.InputReader;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -11,10 +16,34 @@ import org.junit.jupiter.api.Test;
 class CustomerManagerTest {
 
   private CustomerManager customerManager;
+  private FilePersistenceService persistenceService;
 
   @BeforeEach
-  void setUp() {
-    customerManager = new CustomerManager();
+  void setUp() throws IOException {
+    // Clear data files before each test
+    clearDataFiles();
+    persistenceService = new FilePersistenceService("src/test/resources/data/");
+    customerManager = new CustomerManager(persistenceService);
+  }
+
+  @AfterEach
+  void tearDown() throws IOException {
+    // Clear data files after each test
+    clearDataFiles();
+  }
+
+  private void clearDataFiles() throws IOException {
+    Path customersFile = Paths.get("src/test/resources/data/customers.txt");
+
+    // Create directory if it doesn't exist
+    Path dataDir = Paths.get("src/test/resources/data");
+    if (!Files.exists(dataDir)) {
+      Files.createDirectories(dataDir);
+    }
+
+    if (Files.exists(customersFile)) {
+      Files.write(customersFile, "customerType,customerId,name,age,contact,address\n".getBytes());
+    }
   }
 
   @Test
