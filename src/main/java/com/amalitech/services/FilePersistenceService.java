@@ -16,7 +16,7 @@ import java.util.stream.Stream;
  * Service for persisting and loading bank data using java.nio.file. Handles CSV-style file
  * operations for accounts, customers, and transactions.
  */
-public class FilePersistenceService {
+public class FilePersistenceService implements PersistenceService {
 
   private final String dataDir;
   private final String accountsFile;
@@ -137,10 +137,11 @@ public class FilePersistenceService {
    * Loads transactions from file using NIO and Stream API. File format:
    * transactionId,accountNumber,type,amount,balanceAfter,timestamp
    *
-   * @return ArrayList of Transaction objects
+   * @return List of Transaction objects
    * @throws IOException if file operations fail
    */
-  public ArrayList<Transaction> loadTransactions() throws IOException {
+  @Override
+  public List<Transaction> loadTransactions() throws IOException {
     Path path = Paths.get(transactionsFile);
     if (!Files.exists(path)) {
       return new ArrayList<>();

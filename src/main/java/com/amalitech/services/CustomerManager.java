@@ -12,9 +12,9 @@ public class CustomerManager {
 
   private final HashMap<String, Customer> customers;
   private final TablePrinter printer;
-  private final FilePersistenceService persistenceService;
+  private final PersistenceService persistenceService;
 
-  public CustomerManager(FilePersistenceService persistenceService) {
+  public CustomerManager(PersistenceService persistenceService) {
     this.persistenceService = persistenceService;
     this.printer = new ConsoleTablePrinter();
     this.customers = loadCustomersFromFile();

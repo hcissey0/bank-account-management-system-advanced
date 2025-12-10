@@ -139,7 +139,7 @@ class FilePersistenceServiceTest {
     persistenceService.saveTransactions(transactions);
 
     // Load transactions
-    ArrayList<Transaction> loadedTransactions = persistenceService.loadTransactions();
+    List<Transaction> loadedTransactions = persistenceService.loadTransactions();
 
     // Verify
     assertEquals(3, loadedTransactions.size());
@@ -156,7 +156,7 @@ class FilePersistenceServiceTest {
     // Ensure files are empty (only headers)
     HashMap<String, Customer> customers = persistenceService.loadCustomers();
     HashMap<String, Account> accounts = persistenceService.loadAccounts(customers);
-    ArrayList<Transaction> transactions = persistenceService.loadTransactions();
+    List<Transaction> transactions = persistenceService.loadTransactions();
 
     // Verify all collections are empty
     assertTrue(customers.isEmpty());
@@ -208,7 +208,7 @@ class FilePersistenceServiceTest {
     persistenceService.saveTransactions(transactions);
 
     // Load transaction back
-    ArrayList<Transaction> loaded = persistenceService.loadTransactions();
+    List<Transaction> loaded = persistenceService.loadTransactions();
 
     // Verify timestamp was preserved
     assertFalse(loaded.isEmpty());
