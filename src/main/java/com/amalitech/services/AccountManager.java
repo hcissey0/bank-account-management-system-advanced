@@ -36,6 +36,14 @@ public class AccountManager {
     return accounts.size();
   }
 
+  public long getSavingsAccountCount() {
+    return accounts.values().stream().filter(a -> a.getAccountType().equals("Savings")).count();
+  }
+
+  public long getCheckingAccountCount() {
+    return accounts.values().stream().filter(a -> a.getAccountType().equals("Checking")).count();
+  }
+
   public void addAccount(Account account) {
     if (account == null) {
       System.out.println("Cannot add null account.");
@@ -50,6 +58,35 @@ public class AccountManager {
       throw new AccountNotFoundException("Account with number " + accountNumber + " not found.");
     }
     return account;
+  }
+
+  /**
+   * Transfers funds between two accounts.
+   *
+   * @param fromAccountNumber the source account number
+   * @param toAccountNumber the destination account number
+   * @param amount the amount to transfer
+   * @throws Exception if transfer fails (insufficient funds, invalid account, etc.)
+   */
+  public void transfer(String fromAccountNumber, String toAccountNumber, double amount)
+      throws Exception {
+    if (fromAccountNumber.equals(toAccountNumber)) {
+      throw new IllegalArgumentException("Cannot transfer to the same account.");
+    }
+
+    Account fromAccount = findAccount(fromAccountNumber);
+    Account toAccount = findAccount(toAccountNumber);
+
+    // Lock ordering to prevent deadlocks
+    Object lock1 = fromAccountNumber.compareTo(toAccountNumber) < 0 ? fromAccount : toAccount;
+    Object lock2 = fromAccountNumber.compareTo(toAccountNumber) < 0 ? toAccount : fromAccount;
+
+    synchronized (lock1) {
+      synchronized (lock2) {
+        fromAccount.withdraw(amount);
+        toAccount.deposit(amount);
+      }
+    }
   }
 
   /**

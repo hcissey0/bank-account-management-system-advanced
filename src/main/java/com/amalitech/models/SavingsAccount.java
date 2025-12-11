@@ -42,7 +42,7 @@ public class SavingsAccount extends Account {
 
   /** Calculates the potential interest based on current balance and interest rate. */
   public double calculateInterest() {
-    return this.getBalance() * this.interestRate;
+    return this.getBalance() * (this.interestRate / 100);
   }
 
   @java.lang.Override

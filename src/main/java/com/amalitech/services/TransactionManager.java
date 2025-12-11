@@ -5,7 +5,10 @@ import com.amalitech.utils.ConsoleTablePrinter;
 import com.amalitech.utils.InputReader;
 import com.amalitech.utils.TablePrinter;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 /** Manages a collection of transactions using ArrayList with file persistence. */
@@ -13,6 +16,8 @@ public class TransactionManager {
 
   private static final String DEPOSIT_TYPE = "DEPOSIT";
   private static final String WITHDRAWAL_TYPE = "WITHDRAWAL";
+  private static final String TRANSFER_IN_TYPE = "TRANSFER_IN";
+  private static final String TRANSFER_OUT_TYPE = "TRANSFER_OUT";
 
   private final List<Transaction> transactions;
   private final TablePrinter printer;
@@ -59,8 +64,44 @@ public class TransactionManager {
         .sum();
   }
 
+  /** Calculates the total amount of all transfers in using Stream API. */
+  public double calculateTotalTransfersIn() {
+    return transactions.stream()
+        .filter(t -> t.getType().equalsIgnoreCase(TRANSFER_IN_TYPE))
+        .mapToDouble(Transaction::getAmount)
+        .sum();
+  }
+
+  /** Calculates the total amount of all transfers out using Stream API. */
+  public double calculateTotalTransfersOut() {
+    return transactions.stream()
+        .filter(t -> t.getType().equalsIgnoreCase(TRANSFER_OUT_TYPE))
+        .mapToDouble(Transaction::getAmount)
+        .sum();
+  }
+
   public int getTransactionCount() {
     return transactions.size();
+  }
+
+  public long getDepositCount() {
+    return transactions.stream().filter(t -> t.getType().equalsIgnoreCase(DEPOSIT_TYPE)).count();
+  }
+
+  public long getWithdrawalCount() {
+    return transactions.stream().filter(t -> t.getType().equalsIgnoreCase(WITHDRAWAL_TYPE)).count();
+  }
+
+  public long getTransferInCount() {
+    return transactions.stream()
+        .filter(t -> t.getType().equalsIgnoreCase(TRANSFER_IN_TYPE))
+        .count();
+  }
+
+  public long getTransferOutCount() {
+    return transactions.stream()
+        .filter(t -> t.getType().equalsIgnoreCase(TRANSFER_OUT_TYPE))
+        .count();
   }
 
   /**
@@ -76,11 +117,15 @@ public class TransactionManager {
     }
 
     String[] headers = createTransactionHeaders();
-    String[][] data = buildTransactionData(transactions);
+    String[][] data = buildTransactionData(sortTransactionsNewestFirst(transactions));
 
     printer.printTable(headers, data);
     displayTransactionSummary(
-        getTransactionCount(), calculateTotalDeposits(), calculateTotalWithdrawals());
+        getTransactionCount(),
+        calculateTotalDeposits(),
+        calculateTotalWithdrawals(),
+        calculateTotalTransfersIn(),
+        calculateTotalTransfersOut());
 
     inputReader.waitForEnter();
   }
@@ -107,13 +152,20 @@ public class TransactionManager {
     }
 
     String[] headers = createTransactionHeaders();
-    String[][] data = buildTransactionData(accountTransactions);
+    String[][] data = buildTransactionData(sortTransactionsNewestFirst(accountTransactions));
 
     printer.printTable(headers, data);
 
     double totalDeposits = getTotalDeposits(accountNumber);
     double totalWithdrawals = getTotalWithdrawals(accountNumber);
-    displayTransactionSummary(accountTransactions.size(), totalDeposits, totalWithdrawals);
+    double totalTransfersIn = getTotalTransfersIn(accountNumber);
+    double totalTransfersOut = getTotalTransfersOut(accountNumber);
+    displayTransactionSummary(
+        accountTransactions.size(),
+        totalDeposits,
+        totalWithdrawals,
+        totalTransfersIn,
+        totalTransfersOut);
 
     inputReader.waitForEnter();
   }
@@ -148,7 +200,36 @@ public class TransactionManager {
         .sum();
   }
 
+  /** Returns total transfers in for the specified account using Stream API. */
+  public double getTotalTransfersIn(String accountNumber) {
+    return transactions.stream()
+        .filter(t -> t.getAccountNumber().equals(accountNumber))
+        .filter(t -> t.getType().equalsIgnoreCase(TRANSFER_IN_TYPE))
+        .mapToDouble(Transaction::getAmount)
+        .sum();
+  }
+
+  /** Returns total transfers out for the specified account using Stream API. */
+  public double getTotalTransfersOut(String accountNumber) {
+    return transactions.stream()
+        .filter(t -> t.getAccountNumber().equals(accountNumber))
+        .filter(t -> t.getType().equalsIgnoreCase(TRANSFER_OUT_TYPE))
+        .mapToDouble(Transaction::getAmount)
+        .sum();
+  }
+
   // ==================== HELPER METHODS ====================
+
+  /** Sorts transactions by timestamp descending (newest first). */
+  private List<Transaction> sortTransactionsNewestFirst(List<Transaction> transactions) {
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+    return transactions.stream()
+        .sorted(
+            Comparator.comparing(
+                    (Transaction t) -> LocalDateTime.parse(t.getTimestamp(), formatter))
+                .reversed())
+        .toList();
+  }
 
   private String[] createTransactionHeaders() {
     return new String[] {"TRANSACTION ID", "ACCOUNT NUMBER", "TYPE", "AMOUNT", "DATE"};
@@ -170,14 +251,23 @@ public class TransactionManager {
   }
 
   private String formatAmount(String type, double amount) {
-    String prefix = type.equalsIgnoreCase(DEPOSIT_TYPE) ? "+$" : "-$";
+    boolean isCredit =
+        type.equalsIgnoreCase(DEPOSIT_TYPE) || type.equalsIgnoreCase(TRANSFER_IN_TYPE);
+    String prefix = isCredit ? "+$" : "-$";
     return String.format("%s%.2f", prefix, amount);
   }
 
-  private void displayTransactionSummary(int count, double totalDeposits, double totalWithdrawals) {
+  private void displayTransactionSummary(
+      int count,
+      double totalDeposits,
+      double totalWithdrawals,
+      double totalTransfersIn,
+      double totalTransfersOut) {
     System.out.println("Number of transactions: " + count);
     System.out.println(String.format("Total Deposits: $%.2f", totalDeposits));
     System.out.println(String.format("Total Withdrawals: $%.2f", totalWithdrawals));
+    System.out.println(String.format("Total Transfers In: $%.2f", totalTransfersIn));
+    System.out.println(String.format("Total Transfers Out: $%.2f", totalTransfersOut));
   }
 
   /** Saves all transactions to file. */

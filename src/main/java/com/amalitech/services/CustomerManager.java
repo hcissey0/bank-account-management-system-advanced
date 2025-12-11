@@ -91,6 +91,14 @@ public class CustomerManager {
     return customers.size();
   }
 
+  public long getRegularCustomerCount() {
+    return customers.values().stream().filter(c -> c instanceof RegularCustomer).count();
+  }
+
+  public long getPremiumCustomerCount() {
+    return customers.values().stream().filter(c -> c instanceof PremiumCustomer).count();
+  }
+
   /** Saves all customers to file. */
   public void saveCustomers() {
     try {

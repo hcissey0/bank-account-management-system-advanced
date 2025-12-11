@@ -148,4 +148,48 @@ class AccountManagerTest {
   void testGetTotalBalanceWithNoAccounts() {
     assertEquals(0.0, accountManager.getTotalBalance());
   }
+
+  @Test
+  void testTransferSuccess() throws Exception {
+    Account fromAccount = new CheckingAccount(customer, 1000.0);
+    Account toAccount = new SavingsAccount(customer, 500.0);
+    accountManager.addAccount(fromAccount);
+    accountManager.addAccount(toAccount);
+
+    accountManager.transfer(fromAccount.getAccountNumber(), toAccount.getAccountNumber(), 200.0);
+
+    assertEquals(800.0, fromAccount.getBalance());
+    assertEquals(700.0, toAccount.getBalance());
+  }
+
+  @Test
+  void testTransferInsufficientFunds() {
+    // SavingsAccount requires min balance of 500.
+    Account fromAccount = new SavingsAccount(customer, 500.0);
+    Account toAccount = new CheckingAccount(customer, 100.0);
+    accountManager.addAccount(fromAccount);
+    accountManager.addAccount(toAccount);
+
+    // Try to transfer 100. Balance would be 400, which is < 500. Should fail.
+    assertThrows(
+        Exception.class,
+        () ->
+            accountManager.transfer(
+                fromAccount.getAccountNumber(), toAccount.getAccountNumber(), 100.0));
+
+    // Verify balances unchanged
+    assertEquals(500.0, fromAccount.getBalance());
+    assertEquals(100.0, toAccount.getBalance());
+  }
+
+  @Test
+  void testTransferSameAccount() {
+    Account account = new CheckingAccount(customer, 1000.0);
+    accountManager.addAccount(account);
+
+    assertThrows(
+        IllegalArgumentException.class,
+        () ->
+            accountManager.transfer(account.getAccountNumber(), account.getAccountNumber(), 100.0));
+  }
 }

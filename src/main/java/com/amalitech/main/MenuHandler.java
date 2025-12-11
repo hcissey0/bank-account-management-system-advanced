@@ -23,7 +23,7 @@ public class MenuHandler {
       case 3 ->
           showTransactionsMenu(
               accountManager, transactionManager, customerManager, inputReader, configService);
-      case 4 -> showReportsMenu(accountManager, transactionManager, inputReader);
+      case 4 -> showReportsMenu(accountManager, transactionManager, customerManager, inputReader);
       case 5 ->
           showDataManagementMenu(
               accountManager, customerManager, transactionManager, inputReader, configService);
@@ -183,6 +183,7 @@ public class MenuHandler {
   public static void showReportsMenu(
       AccountManager accountManager,
       TransactionManager transactionManager,
+      CustomerManager customerManager,
       InputReader inputReader) {
     int choice;
     do {
@@ -192,7 +193,9 @@ public class MenuHandler {
       switch (choice) {
         case 1 ->
             ReportOperations.generateBankStatement(accountManager, transactionManager, inputReader);
-        case 2 -> ReportOperations.displayBankSummary(accountManager, inputReader);
+        case 2 ->
+            ReportOperations.displayBankSummary(
+                accountManager, customerManager, transactionManager, inputReader);
         case 0 -> {}
         default -> System.out.println("Invalid Input. Try Again!");
       }

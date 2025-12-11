@@ -30,7 +30,7 @@ public class TransactionOperations {
     try {
       Account account = accountManager.findAccount(accountNumber);
       account.displayAccountDetails();
-      handleTransaction(account, transactionManager, inputReader);
+      handleTransaction(accountManager, account, transactionManager, inputReader);
     } catch (AccountNotFoundException e) {
       System.out.println(e.getMessage());
       inputReader.waitForEnter();
@@ -87,8 +87,17 @@ public class TransactionOperations {
   }
 
   private static void handleTransaction(
-      Account account, TransactionManager transactionManager, InputReader inputReader) {
+      AccountManager accountManager,
+      Account account,
+      TransactionManager transactionManager,
+      InputReader inputReader) {
     int transactionType = promptTransactionType(inputReader);
+
+    if (transactionType == 3) {
+      performTransfer(accountManager, transactionManager, account, inputReader);
+      return;
+    }
+
     double amount = inputReader.readDouble("Enter amount: ", 0);
 
     Transaction transaction = buildTransaction(account, transactionType, amount);
@@ -104,8 +113,60 @@ public class TransactionOperations {
   }
 
   private static int promptTransactionType(InputReader inputReader) {
-    System.out.println("\nSelect Transaction Type:\n1. Deposit\n2. Withdraw");
-    return inputReader.readInt("Enter choice (1-2): ", 1, 2);
+    System.out.println("\nSelect Transaction Type:\n1. Deposit\n2. Withdraw\n3. Transfer");
+    return inputReader.readInt("Enter choice (1-3): ", 1, 3);
+  }
+
+  private static void performTransfer(
+      AccountManager accountManager,
+      TransactionManager transactionManager,
+      Account fromAccount,
+      InputReader inputReader) {
+    String toAccountNumber;
+    while (true) {
+      toAccountNumber = inputReader.readString("\nEnter Destination Account number: ");
+      try {
+        ValidationUtils.validateAccountNumber(toAccountNumber);
+        if (fromAccount.getAccountNumber().equals(toAccountNumber)) {
+          System.out.println("Source and destination accounts cannot be the same.");
+          continue;
+        }
+        break;
+      } catch (InvalidInputException e) {
+        System.out.println(e.getMessage());
+      }
+    }
+
+    try {
+      Account toAccount = accountManager.findAccount(toAccountNumber);
+
+      double amount = inputReader.readDouble("Enter amount to transfer: ", 0);
+
+      if (inputReader.readString("Confirm transfer? (y/n): ").toLowerCase().startsWith("y")) {
+        accountManager.transfer(fromAccount.getAccountNumber(), toAccountNumber, amount);
+
+        // Record transactions
+        Transaction debit =
+            new Transaction(
+                fromAccount.getAccountNumber(), "TRANSFER_OUT", amount, fromAccount.getBalance());
+        Transaction credit =
+            new Transaction(toAccountNumber, "TRANSFER_IN", amount, toAccount.getBalance());
+
+        transactionManager.addTransaction(debit);
+        transactionManager.addTransaction(credit);
+
+        System.out.println("Transfer Successful!");
+        System.out.println("New Source Balance: $" + fromAccount.getBalance());
+      } else {
+        System.out.println("Transfer cancelled.");
+      }
+
+    } catch (AccountNotFoundException e) {
+      System.out.println(e.getMessage());
+    } catch (Exception e) {
+      System.out.println("Transfer failed: " + e.getMessage());
+    }
+    inputReader.waitForEnter();
   }
 
   private static Transaction buildTransaction(Account account, int transactionType, double amount) {
