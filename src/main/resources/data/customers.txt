@@ -1,1 +1,2 @@
 customerType,customerId,name,age,contact,address,email
+Regular,CUS001,hasd,32,3223232323,asd,a@a.com

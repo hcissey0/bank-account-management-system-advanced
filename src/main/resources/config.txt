@@ -1,0 +1,5 @@
+#Bank Account Management System Configuration
+#Thu Dec 11 06:24:17 UTC 2025
+auto_load_on_startup=true
+auto_save=true
+save_on_exit=false

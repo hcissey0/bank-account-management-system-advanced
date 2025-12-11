@@ -32,7 +32,9 @@ class AccountTest {
       if (amount > getBalance()) {
         throw new InvalidAmountException("Insufficient funds");
       }
-      return super.withdraw(amount);
+      double newBalance = getBalance() - amount;
+      setBalance(newBalance);
+      return newBalance;
     }
   }
 
@@ -51,7 +53,7 @@ class AccountTest {
   }
 
   @Test
-  void testDeposit() {
+  void testDeposit() throws Exception {
     account.deposit(100.0);
     assertEquals(100.0, account.getBalance());
   }
@@ -87,11 +89,6 @@ class AccountTest {
   }
 
   @Test
-  void testValidateDepositNegativeAmount() {
-    assertThrows(InvalidAmountException.class, () -> account.validateDeposit(-10.0));
-  }
-
-  @Test
   void testWithdrawInsufficientFunds() {
     assertThrows(InvalidAmountException.class, () -> account.withdraw(10.0));
   }
@@ -116,24 +113,6 @@ class AccountTest {
     // its value depends on how many Account objects have been created in the JVM.
     // We just verify it returns a positive integer.
     assertTrue(Account.getAccountCounter() > 0);
-  }
-
-  @Test
-  void testValidateAmountDeposit() throws Exception {
-    // Should not throw exception for valid positive amount
-    account.validateAmount(100.0, "Deposit");
-  }
-
-  @Test
-  void testValidateAmountWithdrawal() throws Exception {
-    account.deposit(200.0);
-    // Should not throw exception for valid withdrawal amount
-    account.validateAmount(100.0, "Withdrawal");
-  }
-
-  @Test
-  void testValidateAmountDepositInvalid() {
-    assertThrows(InvalidAmountException.class, () -> account.validateAmount(-50.0, "Deposit"));
   }
 
   @Test

@@ -21,16 +21,16 @@ public class TransactionManager {
   public TransactionManager(PersistenceService persistenceService) {
     this.persistenceService = persistenceService;
     this.printer = new ConsoleTablePrinter();
-    this.transactions = loadTransactionsFromFile();
+    this.transactions = new ArrayList<>();
   }
 
-  /** Loads transactions from file on initialization. */
-  private List<Transaction> loadTransactionsFromFile() {
+  /** Loads transactions from file. */
+  public void loadTransactions() {
     try {
-      return persistenceService.loadTransactions();
+      this.transactions.clear();
+      this.transactions.addAll(persistenceService.loadTransactions());
     } catch (IOException e) {
       System.err.println("Warning: Could not load transactions from file: " + e.getMessage());
-      return new ArrayList<>();
     }
   }
 

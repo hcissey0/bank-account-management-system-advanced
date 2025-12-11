@@ -1,6 +1,7 @@
 package com.amalitech.models;
 
 import com.amalitech.exceptions.InvalidAmountException;
+import com.amalitech.utils.ValidationUtils;
 
 /**
  * Abstract base class for bank accounts, implementing {@link Transactable} for transactions.
@@ -68,14 +69,13 @@ public abstract class Account implements Transactable {
 
   // methods
 
-  public void deposit(double amount) {
+  public synchronized double deposit(double amount) throws InvalidAmountException {
+    ValidationUtils.validateDeposit(amount);
     this.balance += amount;
-  }
-
-  public double withdraw(double amount) throws Exception {
-    this.balance -= amount;
     return this.balance;
   }
+
+  public abstract double withdraw(double amount) throws Exception;
 
   /**
    * Processes a deposit or withdrawal transaction after validation.
@@ -85,28 +85,10 @@ public abstract class Account implements Transactable {
    * @throws Exception if validation fails or type is invalid
    */
   @Override
-  public void processTransaction(double amount, String type) throws Exception {
-    validateAmount(amount, type);
-
-    if (type.equalsIgnoreCase("Deposit")) this.deposit(amount);
-    else if (type.equalsIgnoreCase("Withdrawal")) this.withdraw(amount);
-    else throw new Exception("Invalid transaction type: " + type);
-  }
-
-  /**
-   * Validates the transaction amount based on type.
-   *
-   * @param amount the transaction amount
-   * @param type the transaction type ("Deposit" or "Withdrawal")
-   * @throws Exception if the amount is invalid for the transaction type
-   */
-  @Override
-  public void validateAmount(double amount, String type) throws Exception {
-    if (amount <= 0) throw new InvalidAmountException("Amount must be positive");
-  }
-
-  public void validateDeposit(double amount) throws InvalidAmountException {
-    if (amount <= 0) throw new InvalidAmountException("Amount must be positive");
+  public double processTransaction(double amount, String type) throws Exception {
+    if (type.equalsIgnoreCase("Deposit")) return this.deposit(amount);
+    else if (type.equalsIgnoreCase("Withdrawal")) return this.withdraw(amount);
+    throw new IllegalArgumentException("Invalid transaction type: " + type);
   }
 
   public abstract void displayAccountDetails();

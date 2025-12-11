@@ -1,6 +1,10 @@
 package com.amalitech.utils;
 
+import com.amalitech.exceptions.InsufficientFundsException;
+import com.amalitech.exceptions.InvalidAmountException;
 import com.amalitech.exceptions.InvalidInputException;
+import com.amalitech.exceptions.OverdraftLimitExceededException;
+
 import java.util.regex.Pattern;
 
 /** Utility class for validating inputs using Regex patterns. */
@@ -95,6 +99,56 @@ public class ValidationUtils {
   public static void validateAge(int age) throws InvalidInputException {
     if (age < 18 || age > 120) {
       throw new InvalidInputException("Invalid age. Must be between 18 and 120.");
+    }
+  }
+
+  /**
+   * Validates if the amount is positive.
+   *
+   * @param amount The amount to validate.
+   * @throws InvalidAmountException if invalid.
+   */
+  public static void validateDeposit(double amount) throws InvalidAmountException {
+    if (amount <= 0) {
+      throw new InvalidAmountException("Invalid deposit amount. Must be positive.");
+    }
+  }
+
+  /**
+   * Validates if the amount is positive and does not exceed the balance.
+   *
+   * @param amount The amount to validate.
+   * @param balance The current balance.
+   * @throws InvalidAmountException if invalid.
+   * @throws InsufficientFundsException if insufficient funds.
+   */
+  public static void validateSavingsWithdrawal(double amount, double balance, double minimumBalance)
+      throws InvalidAmountException, InsufficientFundsException {
+    if (amount <= 0) {
+      throw new InvalidAmountException("Invalid withdrawal amount. Must be positive.");
+    }
+    if (amount > balance - minimumBalance) {
+      throw new InsufficientFundsException("Insufficient funds for this withdrawal. Minimum balance must be maintained.");
+    }
+  }
+
+  /**
+   * Validates if the amount is positive and does not exceed overdraft limit.
+   *
+   * @param amount The amount to validate.
+   * @param balance The current balance.
+   * @param overdraftLimit The overdraft limit.
+   * @throws InvalidAmountException if invalid.
+   * @throws OverdraftLimitExceededException if overdraft limit exceeded.
+   */
+  public static void validateCheckingWithdrawal(
+      double amount, double balance, double overdraftLimit)
+      throws InvalidAmountException, OverdraftLimitExceededException {
+    if (amount <= 0) {
+      throw new InvalidAmountException("Invalid withdrawal amount. Must be positive.");
+    }
+    if (amount - balance > overdraftLimit) {
+      throw new OverdraftLimitExceededException("Withdrawal exceeds overdraft limit.");
     }
   }
 }

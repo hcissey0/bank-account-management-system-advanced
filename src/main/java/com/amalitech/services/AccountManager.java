@@ -19,16 +19,16 @@ public class AccountManager {
     this.customerManager = customerManager;
     this.persistenceService = persistenceService;
     this.printer = new ConsoleTablePrinter();
-    this.accounts = loadAccountsFromFile();
+    this.accounts = new HashMap<>();
   }
 
-  /** Loads accounts from file on initialization. */
-  private HashMap<String, Account> loadAccountsFromFile() {
+  /** Loads accounts from file. */
+  public void loadAccounts() {
     try {
-      return persistenceService.loadAccounts(customerManager.getCustomers());
+      this.accounts.clear();
+      this.accounts.putAll(persistenceService.loadAccounts(customerManager.getCustomers()));
     } catch (IOException e) {
       System.err.println("Warning: Could not load accounts from file: " + e.getMessage());
-      return new HashMap<>();
     }
   }
 
