@@ -14,8 +14,19 @@ public class MenuDisplay {
     System.out.println("3. Manage Transactions");
     System.out.println("4. Reports & Statements");
     System.out.println("5. Data Management");
-    System.out.println("6. Run Tests");
-    System.out.println("7. Exit");
+    System.out.println("6. Concurrency Tests");
+    System.out.println("7. Run Tests");
+    System.out.println("0. Exit");
+    System.out.println();
+  }
+
+  public static void showConcurrencyMenu() {
+    System.out.println("\n+---------------------+");
+    System.out.println("|  CONCURRENCY MENU   |");
+    System.out.println("+---------------------+");
+    System.out.println("1. Run Standard Simulation (100 threads)");
+    System.out.println("2. Run Custom Simulation");
+    System.out.println("0. Back to Main Menu");
     System.out.println();
   }
 

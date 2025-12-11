@@ -27,10 +27,68 @@ public class MenuHandler {
       case 5 ->
           showDataManagementMenu(
               accountManager, customerManager, transactionManager, inputReader, configService);
-      case 6 -> DataOperations.runTests(inputReader);
-      case 7 -> {}
+      case 6 -> showConcurrencyMenu(accountManager, inputReader);
+      case 7 -> DataOperations.runTests(inputReader);
+      case 0 -> {}
       default -> System.out.println("Invalid Input. Try Again!");
     }
+  }
+
+  // ==================== CONCURRENCY MENU ====================
+
+  public static void showConcurrencyMenu(AccountManager accountManager, InputReader inputReader) {
+    int choice;
+    do {
+      MenuDisplay.showConcurrencyMenu();
+      choice = inputReader.readInt("Enter your choice: ", 0, 2);
+
+      switch (choice) {
+        case 1 -> {
+          String accNum = inputReader.readString("Enter Account Number to test: ");
+          try {
+            com.amalitech.models.Account account = accountManager.findAccount(accNum);
+            System.out.println("Starting standard simulation (100 deposits, 100 withdrawals)...");
+            double startBalance = account.getBalance();
+            com.amalitech.utils.ConcurrencyUtils.runCustomSimulation(account, 100, 100, true);
+            System.out.println("Simulation complete.");
+            System.out.println("Start Balance: " + startBalance);
+            System.out.println("Final Balance: " + account.getBalance());
+            if (Math.abs(startBalance - account.getBalance()) < 0.001) {
+              System.out.println("SUCCESS: Balance matches!");
+            } else {
+              System.out.println("FAILURE: Balance mismatch!");
+            }
+          } catch (com.amalitech.exceptions.AccountNotFoundException e) {
+            System.out.println(e.getMessage());
+          } catch (InterruptedException e) {
+            System.err.println("Simulation interrupted: " + e.getMessage());
+          }
+          inputReader.waitForEnter();
+        }
+        case 2 -> {
+          String accNum = inputReader.readString("Enter Account Number to test: ");
+          try {
+            com.amalitech.models.Account account = accountManager.findAccount(accNum);
+            int deposits = inputReader.readInt("Enter number of deposits: ", 1, 1000);
+            int withdrawals = inputReader.readInt("Enter number of withdrawals: ", 1, 1000);
+            System.out.println("Starting custom simulation...");
+            double startBalance = account.getBalance();
+            com.amalitech.utils.ConcurrencyUtils.runCustomSimulation(
+                account, deposits, withdrawals, true);
+            System.out.println("Simulation complete.");
+            System.out.println("Start Balance: " + startBalance);
+            System.out.println("Final Balance: " + account.getBalance());
+          } catch (com.amalitech.exceptions.AccountNotFoundException e) {
+            System.out.println(e.getMessage());
+          } catch (InterruptedException e) {
+            System.err.println("Simulation interrupted: " + e.getMessage());
+          }
+          inputReader.waitForEnter();
+        }
+        case 0 -> {}
+        default -> System.out.println("Invalid Input. Try Again!");
+      }
+    } while (choice != 0);
   }
 
   // ==================== ACCOUNTS MENU ====================

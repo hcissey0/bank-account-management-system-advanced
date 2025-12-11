@@ -69,7 +69,7 @@ public abstract class Account implements Transactable {
 
   // methods
 
-  public double deposit(double amount) throws InvalidAmountException {
+  public synchronized double deposit(double amount) throws InvalidAmountException {
     ValidationUtils.validateDeposit(amount);
     this.balance += amount;
     return this.balance;

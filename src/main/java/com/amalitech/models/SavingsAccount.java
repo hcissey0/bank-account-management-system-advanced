@@ -73,7 +73,8 @@ public class SavingsAccount extends Account {
    * @throws Exception if the withdrawal would result in a balance below the minimum
    */
   @Override
-  public double withdraw(double amount) throws InvalidAmountException, InsufficientFundsException {
+  public synchronized double withdraw(double amount)
+      throws InvalidAmountException, InsufficientFundsException {
     ValidationUtils.validateSavingsWithdrawal(amount, this.getBalance(), this.minimumBalance);
     double newBalance = this.getBalance() - amount;
     this.setBalance(newBalance);

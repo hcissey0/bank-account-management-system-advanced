@@ -74,7 +74,7 @@ public class CheckingAccount extends Account {
    * @throws OverdraftLimitExceededException if the withdrawal would exceed the overdraft limit
    */
   @Override
-  public double withdraw(double amount)
+  public synchronized double withdraw(double amount)
       throws InvalidAmountException, OverdraftLimitExceededException {
     ValidationUtils.validateCheckingWithdrawal(amount, this.getBalance(), this.overdraftLimit);
     double newBalance = this.getBalance() - amount;

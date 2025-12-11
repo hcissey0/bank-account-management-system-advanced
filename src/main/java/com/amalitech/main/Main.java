@@ -28,7 +28,7 @@ public class Main {
       int choice;
       do {
         MenuDisplay.showMainMenu();
-        choice = inputReader.readInt("Enter your choice: ", 1, 7);
+        choice = inputReader.readInt("Enter your choice: ", 0, 7);
         MenuHandler.handleMainMenuChoice(
             choice,
             accountManager,
@@ -36,7 +36,7 @@ public class Main {
             customerManager,
             inputReader,
             configService);
-      } while (choice != 7);
+      } while (choice != 0);
 
       // Save all data before exit if configured
       if (configService.isSaveOnExit()) {
