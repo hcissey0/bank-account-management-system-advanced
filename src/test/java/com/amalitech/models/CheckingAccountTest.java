@@ -2,6 +2,8 @@ package com.amalitech.models;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.amalitech.constants.AccountType;
+import com.amalitech.constants.TransactionType;
 import com.amalitech.exceptions.OverdraftLimitExceededException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,7 +24,7 @@ class CheckingAccountTest {
     assertEquals(100.0, checkingAccount.getBalance());
     assertEquals(1000.0, checkingAccount.getOverdraftLimit());
     assertEquals(10.0, checkingAccount.getMonthlyFee());
-    assertEquals("Checking", checkingAccount.getAccountType());
+    assertEquals(AccountType.CHECKING, checkingAccount.getAccountType());
   }
 
   @Test
@@ -69,7 +71,7 @@ class CheckingAccountTest {
     // Try 1200.
     assertThrows(
         OverdraftLimitExceededException.class,
-        () -> checkingAccount.processTransaction(1200.0, "Withdrawal"));
+        () -> checkingAccount.processTransaction(1200.0, TransactionType.WITHDRAWAL));
     assertEquals(100.0, checkingAccount.getBalance()); // Balance unchanged
   }
 
@@ -81,18 +83,18 @@ class CheckingAccountTest {
 
   @Test
   void testGetAccountType() {
-    assertEquals("Checking", checkingAccount.getAccountType());
+    assertEquals(AccountType.CHECKING, checkingAccount.getAccountType());
   }
 
   @Test
   void testValidateWithdrawalSuccess() {
-    assertDoesNotThrow(() -> checkingAccount.processTransaction(200.0, "Withdrawal"));
+    assertDoesNotThrow(() -> checkingAccount.processTransaction(200.0, TransactionType.WITHDRAWAL));
   }
 
   @Test
   void testValidateWithdrawalFailure() {
     assertThrows(
         OverdraftLimitExceededException.class,
-        () -> checkingAccount.processTransaction(1200.0, "Withdrawal"));
+        () -> checkingAccount.processTransaction(1200.0, TransactionType.WITHDRAWAL));
   }
 }

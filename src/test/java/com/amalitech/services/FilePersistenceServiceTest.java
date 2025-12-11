@@ -2,6 +2,9 @@ package com.amalitech.services;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.amalitech.constants.AccountType;
+import com.amalitech.constants.CustomerType;
+import com.amalitech.constants.TransactionType;
 import com.amalitech.models.*;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -85,7 +88,7 @@ class FilePersistenceServiceTest {
 
     assertNotNull(loadedRegular);
     assertEquals(30, loadedRegular.getAge());
-    assertEquals("Regular", loadedRegular.getCustomerType());
+    assertEquals(CustomerType.REGULAR, loadedRegular.getCustomerType());
     assertEquals("555-1234", loadedRegular.getContact());
     assertEquals("john@example.com", loadedRegular.getEmail());
   }
@@ -118,22 +121,22 @@ class FilePersistenceServiceTest {
     // Find savings account by balance and type
     Account loadedSavings =
         loadedAccounts.values().stream()
-            .filter(a -> a.getAccountType().equals("Savings"))
+            .filter(a -> a.getAccountType() == AccountType.SAVINGS)
             .findFirst()
             .orElse(null);
 
     assertNotNull(loadedSavings);
     assertEquals(1000.0, loadedSavings.getBalance(), 0.01);
-    assertEquals("Savings", loadedSavings.getAccountType());
+    assertEquals(AccountType.SAVINGS, loadedSavings.getAccountType());
   }
 
   @Test
   void testSaveAndLoadTransactions() throws IOException {
     // Create test transactions
     ArrayList<Transaction> transactions = new ArrayList<>();
-    transactions.add(new Transaction("ACC001", "DEPOSIT", 100.0, 100.0));
-    transactions.add(new Transaction("ACC001", "WITHDRAWAL", 50.0, 50.0));
-    transactions.add(new Transaction("ACC002", "DEPOSIT", 200.0, 200.0));
+    transactions.add(new Transaction("ACC001", TransactionType.DEPOSIT, 100.0, 100.0));
+    transactions.add(new Transaction("ACC001", TransactionType.WITHDRAWAL, 50.0, 50.0));
+    transactions.add(new Transaction("ACC002", TransactionType.DEPOSIT, 200.0, 200.0));
 
     // Save transactions
     persistenceService.saveTransactions(transactions);
@@ -147,7 +150,7 @@ class FilePersistenceServiceTest {
     // Verify first transaction
     Transaction first = loadedTransactions.get(0);
     assertEquals("ACC001", first.getAccountNumber());
-    assertEquals("DEPOSIT", first.getType());
+    assertEquals(TransactionType.DEPOSIT, first.getType());
     assertEquals(100.0, first.getAmount(), 0.01);
   }
 
@@ -200,7 +203,8 @@ class FilePersistenceServiceTest {
     // Create a transaction with a specific timestamp using the persistence constructor
     String specificTimestamp = "05-12-2025 14:30:45";
     Transaction original =
-        new Transaction("TXN999", "ACC001", "DEPOSIT", 500.0, 1500.0, specificTimestamp);
+        new Transaction(
+            "TXN999", "ACC001", TransactionType.DEPOSIT, 500.0, 1500.0, specificTimestamp);
 
     // Save transaction
     ArrayList<Transaction> transactions = new ArrayList<>();

@@ -2,6 +2,7 @@ package com.amalitech.models;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.amalitech.constants.CustomerType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -26,7 +27,7 @@ class PremiumCustomerTest {
 
   @Test
   void testGetCustomerType() {
-    assertEquals("Premium", premiumCustomer.getCustomerType());
+    assertEquals(CustomerType.PREMIUM, premiumCustomer.getCustomerType());
   }
 
   @Test

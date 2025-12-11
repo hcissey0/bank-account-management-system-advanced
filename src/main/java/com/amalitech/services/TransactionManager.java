@@ -1,5 +1,6 @@
 package com.amalitech.services;
 
+import com.amalitech.constants.TransactionType;
 import com.amalitech.models.*;
 import com.amalitech.utils.ConsoleTablePrinter;
 import com.amalitech.utils.InputReader;
@@ -13,11 +14,6 @@ import java.util.List;
 
 /** Manages a collection of transactions using ArrayList with file persistence. */
 public class TransactionManager {
-
-  private static final String DEPOSIT_TYPE = "DEPOSIT";
-  private static final String WITHDRAWAL_TYPE = "WITHDRAWAL";
-  private static final String TRANSFER_IN_TYPE = "TRANSFER_IN";
-  private static final String TRANSFER_OUT_TYPE = "TRANSFER_OUT";
 
   private final List<Transaction> transactions;
   private final TablePrinter printer;
@@ -51,7 +47,7 @@ public class TransactionManager {
   /** Calculates the total amount of all deposits using Stream API. */
   public double calculateTotalDeposits() {
     return transactions.stream()
-        .filter(t -> t.getType().equalsIgnoreCase(DEPOSIT_TYPE))
+        .filter(t -> t.getType() == TransactionType.DEPOSIT)
         .mapToDouble(Transaction::getAmount)
         .sum();
   }
@@ -59,7 +55,7 @@ public class TransactionManager {
   /** Calculates the total amount of all withdrawals using Stream API. */
   public double calculateTotalWithdrawals() {
     return transactions.stream()
-        .filter(t -> t.getType().equalsIgnoreCase(WITHDRAWAL_TYPE))
+        .filter(t -> t.getType() == TransactionType.WITHDRAWAL)
         .mapToDouble(Transaction::getAmount)
         .sum();
   }
@@ -67,7 +63,7 @@ public class TransactionManager {
   /** Calculates the total amount of all transfers in using Stream API. */
   public double calculateTotalTransfersIn() {
     return transactions.stream()
-        .filter(t -> t.getType().equalsIgnoreCase(TRANSFER_IN_TYPE))
+        .filter(t -> t.getType() == TransactionType.TRANSFER_IN)
         .mapToDouble(Transaction::getAmount)
         .sum();
   }
@@ -75,7 +71,7 @@ public class TransactionManager {
   /** Calculates the total amount of all transfers out using Stream API. */
   public double calculateTotalTransfersOut() {
     return transactions.stream()
-        .filter(t -> t.getType().equalsIgnoreCase(TRANSFER_OUT_TYPE))
+        .filter(t -> t.getType() == TransactionType.TRANSFER_OUT)
         .mapToDouble(Transaction::getAmount)
         .sum();
   }
@@ -85,23 +81,19 @@ public class TransactionManager {
   }
 
   public long getDepositCount() {
-    return transactions.stream().filter(t -> t.getType().equalsIgnoreCase(DEPOSIT_TYPE)).count();
+    return transactions.stream().filter(t -> t.getType() == TransactionType.DEPOSIT).count();
   }
 
   public long getWithdrawalCount() {
-    return transactions.stream().filter(t -> t.getType().equalsIgnoreCase(WITHDRAWAL_TYPE)).count();
+    return transactions.stream().filter(t -> t.getType() == TransactionType.WITHDRAWAL).count();
   }
 
   public long getTransferInCount() {
-    return transactions.stream()
-        .filter(t -> t.getType().equalsIgnoreCase(TRANSFER_IN_TYPE))
-        .count();
+    return transactions.stream().filter(t -> t.getType() == TransactionType.TRANSFER_IN).count();
   }
 
   public long getTransferOutCount() {
-    return transactions.stream()
-        .filter(t -> t.getType().equalsIgnoreCase(TRANSFER_OUT_TYPE))
-        .count();
+    return transactions.stream().filter(t -> t.getType() == TransactionType.TRANSFER_OUT).count();
   }
 
   /**
@@ -186,7 +178,7 @@ public class TransactionManager {
   public double getTotalDeposits(String accountNumber) {
     return transactions.stream()
         .filter(t -> t.getAccountNumber().equals(accountNumber))
-        .filter(t -> t.getType().equalsIgnoreCase(DEPOSIT_TYPE))
+        .filter(t -> t.getType() == TransactionType.DEPOSIT)
         .mapToDouble(Transaction::getAmount)
         .sum();
   }
@@ -195,7 +187,7 @@ public class TransactionManager {
   public double getTotalWithdrawals(String accountNumber) {
     return transactions.stream()
         .filter(t -> t.getAccountNumber().equals(accountNumber))
-        .filter(t -> t.getType().equalsIgnoreCase(WITHDRAWAL_TYPE))
+        .filter(t -> t.getType() == TransactionType.WITHDRAWAL)
         .mapToDouble(Transaction::getAmount)
         .sum();
   }
@@ -204,7 +196,7 @@ public class TransactionManager {
   public double getTotalTransfersIn(String accountNumber) {
     return transactions.stream()
         .filter(t -> t.getAccountNumber().equals(accountNumber))
-        .filter(t -> t.getType().equalsIgnoreCase(TRANSFER_IN_TYPE))
+        .filter(t -> t.getType() == TransactionType.TRANSFER_IN)
         .mapToDouble(Transaction::getAmount)
         .sum();
   }
@@ -213,7 +205,7 @@ public class TransactionManager {
   public double getTotalTransfersOut(String accountNumber) {
     return transactions.stream()
         .filter(t -> t.getAccountNumber().equals(accountNumber))
-        .filter(t -> t.getType().equalsIgnoreCase(TRANSFER_OUT_TYPE))
+        .filter(t -> t.getType() == TransactionType.TRANSFER_OUT)
         .mapToDouble(Transaction::getAmount)
         .sum();
   }
@@ -243,16 +235,15 @@ public class TransactionManager {
                 new String[] {
                   tx.getTransactionId(),
                   tx.getAccountNumber(),
-                  tx.getType().toUpperCase(),
+                  tx.getType().toString(),
                   formatAmount(tx.getType(), tx.getAmount()),
                   tx.getTimestamp()
                 })
         .toArray(String[][]::new);
   }
 
-  private String formatAmount(String type, double amount) {
-    boolean isCredit =
-        type.equalsIgnoreCase(DEPOSIT_TYPE) || type.equalsIgnoreCase(TRANSFER_IN_TYPE);
+  private String formatAmount(TransactionType type, double amount) {
+    boolean isCredit = type == TransactionType.DEPOSIT || type == TransactionType.TRANSFER_IN;
     String prefix = isCredit ? "+$" : "-$";
     return String.format("%s%.2f", prefix, amount);
   }

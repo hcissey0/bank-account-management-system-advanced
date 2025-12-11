@@ -1,8 +1,10 @@
 package com.amalitech.models;
 
+import com.amalitech.constants.CustomerType;
+
 /** Represents a regular bank customer with standard banking services. */
 public class RegularCustomer extends Customer {
-  private static final String CUSTOMER_TYPE = "Regular";
+  private static final CustomerType CUSTOMER_TYPE = CustomerType.REGULAR;
 
   public RegularCustomer(String name, int age, String contact, String address, String email) {
     this.setName(name);
@@ -44,7 +46,7 @@ public class RegularCustomer extends Customer {
   }
 
   @java.lang.Override
-  public String getCustomerType() {
+  public CustomerType getCustomerType() {
     return CUSTOMER_TYPE;
   }
 }

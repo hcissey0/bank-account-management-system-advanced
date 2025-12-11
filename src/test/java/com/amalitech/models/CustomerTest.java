@@ -2,6 +2,7 @@ package com.amalitech.models;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.amalitech.constants.CustomerType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -26,8 +27,8 @@ class CustomerTest {
     }
 
     @Override
-    public String getCustomerType() {
-      return "Test";
+    public CustomerType getCustomerType() {
+      return CustomerType.REGULAR;
     }
   }
 
@@ -49,8 +50,9 @@ class CustomerTest {
     assertEquals(30, customer.getAge());
     assertEquals("1234567890", customer.getContact());
     assertEquals("123 Main St", customer.getAddress());
-    assertEquals("john@example.com", customer.getEmail());
-    assertEquals("Test", customer.getCustomerType());
+    customer.setAddress("456 Elm St");
+    assertEquals("456 Elm St", customer.getAddress());
+    assertEquals(CustomerType.REGULAR, customer.getCustomerType());
 
     customer.setName("Jane Doe");
     assertEquals("Jane Doe", customer.getName());
@@ -63,5 +65,6 @@ class CustomerTest {
 
     customer.setAddress("456 Elm St");
     assertEquals("456 Elm St", customer.getAddress());
+    assertEquals(CustomerType.REGULAR, customer.getCustomerType());
   }
 }

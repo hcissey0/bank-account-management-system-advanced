@@ -1,5 +1,8 @@
 package com.amalitech.services;
 
+import com.amalitech.constants.AccountType;
+import com.amalitech.constants.CustomerType;
+import com.amalitech.constants.TransactionType;
 import com.amalitech.models.*;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -206,9 +209,11 @@ public class FilePersistenceService implements PersistenceService {
       }
 
       Account account;
-      if (accountType.equalsIgnoreCase("Savings")) {
+      AccountType type = AccountType.valueOf(accountType.toUpperCase());
+
+      if (type == AccountType.SAVINGS) {
         account = new SavingsAccount(accountNumber, customer, balance);
-      } else if (accountType.equalsIgnoreCase("Checking")) {
+      } else if (type == AccountType.CHECKING) {
         account = new CheckingAccount(accountNumber, customer, balance);
       } else {
         return null;
@@ -246,9 +251,11 @@ public class FilePersistenceService implements PersistenceService {
       String email = parts[6].trim();
 
       Customer customer;
-      if (customerType.equalsIgnoreCase("Regular")) {
+      CustomerType type = CustomerType.valueOf(customerType.toUpperCase());
+
+      if (type == CustomerType.REGULAR) {
         customer = new RegularCustomer(customerId, name, age, contact, address, email);
-      } else if (customerType.equalsIgnoreCase("Premium")) {
+      } else if (type == CustomerType.PREMIUM) {
         customer = new PremiumCustomer(customerId, name, age, contact, address, email);
       } else {
         return null;
@@ -281,10 +288,12 @@ public class FilePersistenceService implements PersistenceService {
 
       String transactionId = parts[0].trim();
       String accountNumber = parts[1].trim();
-      String type = parts[2].trim();
+      String typeStr = parts[2].trim();
       double amount = Double.parseDouble(parts[3].trim());
       double balanceAfter = Double.parseDouble(parts[4].trim());
       String timestamp = parts[5].trim();
+
+      TransactionType type = TransactionType.valueOf(typeStr.toUpperCase());
 
       // Use constructor that preserves ID and timestamp from file
       return new Transaction(transactionId, accountNumber, type, amount, balanceAfter, timestamp);

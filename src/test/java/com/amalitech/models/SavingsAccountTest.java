@@ -2,6 +2,8 @@ package com.amalitech.models;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.amalitech.constants.AccountType;
+import com.amalitech.constants.TransactionType;
 import com.amalitech.exceptions.InsufficientFundsException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,7 +24,7 @@ class SavingsAccountTest {
     assertEquals(1000.0, savingsAccount.getBalance());
     assertEquals(3.5, savingsAccount.getInterestRate());
     assertEquals(500.0, savingsAccount.getMinimumBalance());
-    assertEquals("Savings", savingsAccount.getAccountType());
+    assertEquals(AccountType.SAVINGS, savingsAccount.getAccountType());
   }
 
   @Test
@@ -37,8 +39,8 @@ class SavingsAccountTest {
 
   @Test
   void testCalculateInterest() {
-    // 1000 * 3.5 = 3500.
-    assertEquals(3500.0, savingsAccount.calculateInterest());
+    // 1000 * 3.5% = 35.0.
+    assertEquals(35.0, savingsAccount.calculateInterest());
   }
 
   @Test
@@ -53,20 +55,20 @@ class SavingsAccountTest {
     // Min balance 500. Balance 1000. Try withdraw 600. Remaining 400 < 500.
     assertThrows(
         InsufficientFundsException.class,
-        () -> savingsAccount.processTransaction(600.0, "Withdrawal"));
+        () -> savingsAccount.processTransaction(600.0, TransactionType.WITHDRAWAL));
     assertEquals(1000.0, savingsAccount.getBalance());
   }
 
   @Test
   void testValidateWithdrawalSuccess() {
-    assertDoesNotThrow(() -> savingsAccount.processTransaction(200.0, "Withdrawal"));
+    assertDoesNotThrow(() -> savingsAccount.processTransaction(200.0, TransactionType.WITHDRAWAL));
   }
 
   @Test
   void testValidateWithdrawalFailure() {
     assertThrows(
         InsufficientFundsException.class,
-        () -> savingsAccount.processTransaction(600.0, "Withdrawal"));
+        () -> savingsAccount.processTransaction(600.0, TransactionType.WITHDRAWAL));
   }
 
   @Test

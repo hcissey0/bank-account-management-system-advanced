@@ -1,5 +1,6 @@
 package com.amalitech.models;
 
+import com.amalitech.constants.AccountType;
 import com.amalitech.exceptions.InvalidAmountException;
 import com.amalitech.exceptions.OverdraftLimitExceededException;
 import com.amalitech.utils.ValidationUtils;
@@ -10,7 +11,7 @@ public class CheckingAccount extends Account {
   private final double overdraftLimit;
   private final double monthlyFee;
 
-  private static final String ACCOUNT_TYPE = "Checking";
+  private static final AccountType ACCOUNT_TYPE = AccountType.CHECKING;
   private static final double OVERDRAFT_LIMIT = 1_000.0;
   private static final double MONTHLY_FEE = 10.0;
 
@@ -62,7 +63,7 @@ public class CheckingAccount extends Account {
   }
 
   @java.lang.Override
-  public String getAccountType() {
+  public AccountType getAccountType() {
     return ACCOUNT_TYPE;
   }
 

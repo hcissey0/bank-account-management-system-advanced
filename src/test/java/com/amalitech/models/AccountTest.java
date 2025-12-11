@@ -2,6 +2,8 @@ package com.amalitech.models;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.amalitech.constants.AccountType;
+import com.amalitech.constants.TransactionType;
 import com.amalitech.exceptions.InvalidAmountException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,8 +25,8 @@ class AccountTest {
     }
 
     @Override
-    public String getAccountType() {
-      return "Test";
+    public AccountType getAccountType() {
+      return AccountType.CHECKING;
     }
 
     @Override
@@ -67,25 +69,22 @@ class AccountTest {
 
   @Test
   void testProcessTransactionDeposit() throws Exception {
-    account.processTransaction(100.0, "Deposit");
+    account.processTransaction(100.0, TransactionType.DEPOSIT);
     assertEquals(100.0, account.getBalance());
   }
 
   @Test
   void testProcessTransactionWithdrawal() throws Exception {
     account.deposit(100.0);
-    account.processTransaction(50.0, "Withdrawal");
+    account.processTransaction(50.0, TransactionType.WITHDRAWAL);
     assertEquals(50.0, account.getBalance());
   }
 
   @Test
   void testProcessTransactionWithWrongType() {
-    assertThrows(Exception.class, () -> account.processTransaction(100.0, "InvalidType"));
-  }
-
-  @Test
-  void testProcessTransactionInvalidType() {
-    assertThrows(Exception.class, () -> account.processTransaction(100.0, "Invalid"));
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> account.processTransaction(100.0, TransactionType.TRANSFER_IN));
   }
 
   @Test
