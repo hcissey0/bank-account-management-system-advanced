@@ -159,7 +159,7 @@ public class MenuHandler {
     int choice;
     do {
       MenuDisplay.showTransactionsMenu();
-      choice = inputReader.readInt("Enter your choice: ", 0, 3);
+      choice = inputReader.readInt("Enter your choice: ", 0, 4);
 
       switch (choice) {
         case 1 -> {
@@ -172,6 +172,12 @@ public class MenuHandler {
         case 3 ->
             TransactionOperations.viewTransactionHistory(
                 accountManager, transactionManager, inputReader);
+        case 4 -> {
+          TransactionOperations.processTransfer(accountManager, transactionManager, inputReader);
+          if (configService.isAutoSave()) {
+            DataOperations.saveAllData(accountManager, customerManager, transactionManager);
+          }
+        }
         case 0 -> {}
         default -> System.out.println("Invalid Input. Try Again!");
       }

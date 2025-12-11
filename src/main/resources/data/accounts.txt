@@ -1,2 +1,3 @@
 accountType,accountNumber,customerId,balance,status
-Savings,ACC001,CUS001,1155.00,Active
+Savings,ACC001,CUS001,1000.00,Active
+Checking,ACC002,CUS002,123387.00,Active

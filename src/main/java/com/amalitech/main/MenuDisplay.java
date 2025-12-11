@@ -60,6 +60,7 @@ public class MenuDisplay {
     System.out.println("1. Process Transaction");
     System.out.println("2. View All Transactions");
     System.out.println("3. View Account Transactions");
+    System.out.println("4. Transfer Funds");
     System.out.println("0. Back to Main Menu");
     System.out.println();
   }

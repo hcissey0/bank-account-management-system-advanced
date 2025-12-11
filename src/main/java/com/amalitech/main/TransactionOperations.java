@@ -37,6 +37,71 @@ public class TransactionOperations {
     }
   }
 
+  public static void processTransfer(
+      AccountManager accountManager,
+      TransactionManager transactionManager,
+      InputReader inputReader) {
+    System.out.println("\n+------------------+\n| TRANSFER FUNDS   |\n+------------------+");
+
+    String fromAccountNumber;
+    while (true) {
+      fromAccountNumber = inputReader.readString("\nEnter Source Account number: ");
+      try {
+        ValidationUtils.validateAccountNumber(fromAccountNumber);
+        break;
+      } catch (InvalidInputException e) {
+        System.out.println(e.getMessage());
+      }
+    }
+
+    String toAccountNumber;
+    while (true) {
+      toAccountNumber = inputReader.readString("\nEnter Destination Account number: ");
+      try {
+        ValidationUtils.validateAccountNumber(toAccountNumber);
+        if (fromAccountNumber.equals(toAccountNumber)) {
+          System.out.println("Source and destination accounts cannot be the same.");
+          continue;
+        }
+        break;
+      } catch (InvalidInputException e) {
+        System.out.println(e.getMessage());
+      }
+    }
+
+    try {
+      Account fromAccount = accountManager.findAccount(fromAccountNumber);
+      Account toAccount = accountManager.findAccount(toAccountNumber);
+
+      System.out.println("\nSource Account Balance: $" + fromAccount.getBalance());
+      double amount = inputReader.readDouble("Enter amount to transfer: ", 0);
+
+      if (inputReader.readString("Confirm transfer? (y/n): ").toLowerCase().startsWith("y")) {
+        accountManager.transfer(fromAccountNumber, toAccountNumber, amount);
+
+        // Record transactions
+        Transaction debit =
+            new Transaction(fromAccountNumber, "TRANSFER_OUT", amount, fromAccount.getBalance());
+        Transaction credit =
+            new Transaction(toAccountNumber, "TRANSFER_IN", amount, toAccount.getBalance());
+
+        transactionManager.addTransaction(debit);
+        transactionManager.addTransaction(credit);
+
+        System.out.println("Transfer Successful!");
+        System.out.println("New Source Balance: $" + fromAccount.getBalance());
+      } else {
+        System.out.println("Transfer cancelled.");
+      }
+
+    } catch (AccountNotFoundException e) {
+      System.out.println(e.getMessage());
+    } catch (Exception e) {
+      System.out.println("Transfer failed: " + e.getMessage());
+    }
+    inputReader.waitForEnter();
+  }
+
   public static void viewTransactionHistory(
       TransactionManager transactionManager, InputReader inputReader) {
     System.out.println(
