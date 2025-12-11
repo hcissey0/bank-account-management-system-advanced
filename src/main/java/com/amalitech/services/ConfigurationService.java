@@ -11,22 +11,28 @@ import java.util.Properties;
 /** Manages application configuration settings. */
 public class ConfigurationService {
 
-  private static final String CONFIG_FILE = "src/main/resources/config.txt";
+  private static final String DEFAULT_CONFIG_FILE = "src/main/resources/config.txt";
   private static final String KEY_AUTO_SAVE = "auto_save";
   private static final String KEY_AUTO_LOAD = "auto_load_on_startup";
   private static final String KEY_SAVE_ON_EXIT = "save_on_exit";
 
+  private final String configFile;
   private final Properties properties;
 
   public ConfigurationService() {
+    this(DEFAULT_CONFIG_FILE);
+  }
+
+  public ConfigurationService(String configFile) {
+    this.configFile = configFile;
     this.properties = new Properties();
     loadConfig();
   }
 
   private void loadConfig() {
-    Path path = Paths.get(CONFIG_FILE);
+    Path path = Paths.get(configFile);
     if (Files.exists(path)) {
-      try (FileInputStream in = new FileInputStream(CONFIG_FILE)) {
+      try (FileInputStream in = new FileInputStream(configFile)) {
         properties.load(in);
       } catch (IOException e) {
         System.err.println("Warning: Could not load config file. Using defaults.");
@@ -42,11 +48,11 @@ public class ConfigurationService {
 
   public void saveConfig() {
     try {
-      Path path = Paths.get(CONFIG_FILE);
-      if (!Files.exists(path.getParent())) {
+      Path path = Paths.get(configFile);
+      if (path.getParent() != null && !Files.exists(path.getParent())) {
         Files.createDirectories(path.getParent());
       }
-      try (FileOutputStream out = new FileOutputStream(CONFIG_FILE)) {
+      try (FileOutputStream out = new FileOutputStream(configFile)) {
         properties.store(out, "Bank Account Management System Configuration");
       }
     } catch (IOException e) {
