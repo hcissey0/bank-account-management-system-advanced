@@ -17,16 +17,16 @@ public class CustomerManager {
   public CustomerManager(PersistenceService persistenceService) {
     this.persistenceService = persistenceService;
     this.printer = new ConsoleTablePrinter();
-    this.customers = loadCustomersFromFile();
+    this.customers = new HashMap<>();
   }
 
-  /** Loads customers from file on initialization. */
-  private HashMap<String, Customer> loadCustomersFromFile() {
+  /** Loads customers from file. */
+  public void loadCustomers() {
     try {
-      return persistenceService.loadCustomers();
+      this.customers.clear();
+      this.customers.putAll(persistenceService.loadCustomers());
     } catch (IOException e) {
       System.err.println("Warning: Could not load customers from file: " + e.getMessage());
-      return new HashMap<>();
     }
   }
 

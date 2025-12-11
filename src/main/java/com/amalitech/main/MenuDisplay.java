@@ -1,5 +1,7 @@
 package com.amalitech.main;
 
+import com.amalitech.services.ConfigurationService;
+
 /** Displays all menu interfaces. */
 public class MenuDisplay {
 
@@ -61,12 +63,24 @@ public class MenuDisplay {
     System.out.println();
   }
 
-  public static void showDataManagementMenu() {
+  public static void showDataManagementMenu(ConfigurationService configService) {
     System.out.println("\n+---------------------+");
     System.out.println("|  DATA MANAGEMENT    |");
     System.out.println("+---------------------+");
     System.out.println("1. Save All Data");
     System.out.println("2. Reload Data");
+    System.out.println(
+        "3. Toggle Auto-Save (Current: "
+            + (configService.isAutoSave() ? "ENABLED" : "DISABLED")
+            + ")");
+    System.out.println(
+        "4. Toggle Auto-Load on Startup (Current: "
+            + (configService.isAutoLoadOnStartup() ? "ENABLED" : "DISABLED")
+            + ")");
+    System.out.println(
+        "5. Toggle Save on Exit (Current: "
+            + (configService.isSaveOnExit() ? "ENABLED" : "DISABLED")
+            + ")");
     System.out.println("0. Back to Main Menu");
     System.out.println();
   }

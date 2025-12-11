@@ -57,6 +57,35 @@ public class TransactionOperations {
     transactionManager.viewTransactionsByAccount(accountNumber, inputReader);
   }
 
+  public static void viewTransactionHistory(
+      AccountManager accountManager,
+      TransactionManager transactionManager,
+      InputReader inputReader) {
+    System.out.println(
+        "\n"
+            + "+---------------------------+\n"
+            + "| VIEW TRANSACTION HISTORY |\n"
+            + "+---------------------------+");
+    String accountNumber;
+    while (true) {
+      accountNumber = inputReader.readString("\nEnter Account number: ");
+      try {
+        ValidationUtils.validateAccountNumber(accountNumber);
+        break;
+      } catch (InvalidInputException e) {
+        System.out.println(e.getMessage());
+      }
+    }
+
+    try {
+      Account account = accountManager.findAccount(accountNumber);
+      transactionManager.viewTransactionsByAccount(account.getAccountNumber(), inputReader);
+    } catch (AccountNotFoundException e) {
+      System.out.println(e.getMessage());
+      inputReader.waitForEnter();
+    }
+  }
+
   private static void handleTransaction(
       Account account, TransactionManager transactionManager, InputReader inputReader) {
     int transactionType = promptTransactionType(inputReader);

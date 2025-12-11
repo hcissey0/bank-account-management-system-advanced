@@ -17,6 +17,17 @@ public class DataOperations {
     System.out.println("Data saved successfully!");
   }
 
+  public static void loadAllData(
+      AccountManager accountManager,
+      CustomerManager customerManager,
+      TransactionManager transactionManager) {
+    System.out.println("\nLoading data...");
+    customerManager.loadCustomers();
+    accountManager.loadAccounts();
+    transactionManager.loadTransactions();
+    System.out.println("Data loaded successfully!");
+  }
+
   public static void runTests(InputReader inputReader) {
     System.out.println("Running tests with JUnit...");
     try {
