@@ -36,6 +36,14 @@ public class AccountManager {
     return accounts.size();
   }
 
+  public long getSavingsAccountCount() {
+    return accounts.values().stream().filter(a -> a.getAccountType().equals("Savings")).count();
+  }
+
+  public long getCheckingAccountCount() {
+    return accounts.values().stream().filter(a -> a.getAccountType().equals("Checking")).count();
+  }
+
   public void addAccount(Account account) {
     if (account == null) {
       System.out.println("Cannot add null account.");
