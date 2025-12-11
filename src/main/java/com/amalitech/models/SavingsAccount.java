@@ -1,6 +1,8 @@
 package com.amalitech.models;
 
 import com.amalitech.exceptions.InsufficientFundsException;
+import com.amalitech.exceptions.InvalidAmountException;
+import com.amalitech.utils.ValidationUtils;
 
 /** Represents a savings account with an interest rate and a minimum balance requirement. */
 public class SavingsAccount extends Account {
@@ -14,7 +16,11 @@ public class SavingsAccount extends Account {
 
   public SavingsAccount(Customer customer, double initialDeposit) {
     super(customer);
-    this.deposit(initialDeposit);
+    try {
+      this.deposit(initialDeposit);
+    } catch (com.amalitech.exceptions.InvalidAmountException e) {
+      throw new IllegalArgumentException("Initial deposit must be positive", e);
+    }
     this.interestRate = INTEREST_RATE;
     this.minimumBalance = MINIMUM_BALANCE;
   }
@@ -67,14 +73,10 @@ public class SavingsAccount extends Account {
    * @throws Exception if the withdrawal would result in a balance below the minimum
    */
   @Override
-  public double withdraw(double amount) throws Exception {
-    if (this.getBalance() - amount < this.minimumBalance) {
-      throw new InsufficientFundsException(
-          "Transaction Failed: Insufficient funds to maintain minimum balance. Current Balance: "
-              + this.getBalance()
-              + ", Minimum Required Balance: "
-              + this.minimumBalance);
-    }
-    return super.withdraw(amount);
+  public double withdraw(double amount) throws InvalidAmountException, InsufficientFundsException {
+    ValidationUtils.validateSavingsWithdrawal(amount, this.getBalance(), this.minimumBalance);
+    double newBalance = this.getBalance() - amount;
+    this.setBalance(newBalance);
+    return newBalance;
   }
 }

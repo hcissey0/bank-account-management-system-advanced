@@ -1,6 +1,8 @@
 package com.amalitech.models;
 
+import com.amalitech.exceptions.InvalidAmountException;
 import com.amalitech.exceptions.OverdraftLimitExceededException;
+import com.amalitech.utils.ValidationUtils;
 
 /** Represents a checking account with overdraft protection and monthly fees. */
 public class CheckingAccount extends Account {
@@ -14,7 +16,11 @@ public class CheckingAccount extends Account {
 
   public CheckingAccount(Customer customer, double initialDeposit) {
     super(customer);
-    this.deposit(initialDeposit);
+    try {
+      this.deposit(initialDeposit);
+    } catch (com.amalitech.exceptions.InvalidAmountException e) {
+      throw new IllegalArgumentException("Initial deposit must be positive", e);
+    }
     this.overdraftLimit = OVERDRAFT_LIMIT;
     this.monthlyFee = MONTHLY_FEE;
   }
@@ -65,13 +71,14 @@ public class CheckingAccount extends Account {
    *
    * @param amount the amount to withdraw
    * @return the new balance
-   * @throws Exception if the withdrawal would exceed the overdraft limit
+   * @throws OverdraftLimitExceededException if the withdrawal would exceed the overdraft limit
    */
   @Override
-  public double withdraw(double amount) throws Exception {
-    if (amount - this.getBalance() > this.overdraftLimit) {
-      throw new OverdraftLimitExceededException("Withdrawal amount exceeds overdraft limit.");
-    }
-    return super.withdraw(amount);
+  public double withdraw(double amount)
+      throws InvalidAmountException, OverdraftLimitExceededException {
+    ValidationUtils.validateCheckingWithdrawal(amount, this.getBalance(), this.overdraftLimit);
+    double newBalance = this.getBalance() - amount;
+    this.setBalance(newBalance);
+    return newBalance;
   }
 }
