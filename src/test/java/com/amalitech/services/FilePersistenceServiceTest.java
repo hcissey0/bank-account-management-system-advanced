@@ -73,10 +73,10 @@ class FilePersistenceServiceTest {
     // Save customers
     persistenceService.saveCustomers(customers);
 
-    // Load customers (note: IDs will be regenerated, but data preserved)
+    // Load customers
     HashMap<String, Customer> loadedCustomers = persistenceService.loadCustomers();
 
-    // Verify count and data integrity (not IDs, as they're regenerated)
+    // Verify count and data integrity
     assertEquals(2, loadedCustomers.size());
 
     // Find customers by name since IDs change
