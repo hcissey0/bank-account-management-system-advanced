@@ -1,5 +1,7 @@
 package com.amalitech.models;
 
+import com.amalitech.constants.AccountType;
+import com.amalitech.constants.TransactionType;
 import com.amalitech.exceptions.InvalidAmountException;
 import com.amalitech.utils.ValidationUtils;
 
@@ -81,17 +83,17 @@ public abstract class Account implements Transactable {
    * Processes a deposit or withdrawal transaction after validation.
    *
    * @param amount the transaction amount (must be positive)
-   * @param type the transaction type ("Deposit" or "Withdrawal")
+   * @param type the transaction type
    * @throws Exception if validation fails or type is invalid
    */
   @Override
-  public double processTransaction(double amount, String type) throws Exception {
-    if (type.equalsIgnoreCase("Deposit")) return this.deposit(amount);
-    else if (type.equalsIgnoreCase("Withdrawal")) return this.withdraw(amount);
+  public double processTransaction(double amount, TransactionType type) throws Exception {
+    if (type == TransactionType.DEPOSIT) return this.deposit(amount);
+    else if (type == TransactionType.WITHDRAWAL) return this.withdraw(amount);
     throw new IllegalArgumentException("Invalid transaction type: " + type);
   }
 
   public abstract void displayAccountDetails();
 
-  public abstract String getAccountType();
+  public abstract AccountType getAccountType();
 }

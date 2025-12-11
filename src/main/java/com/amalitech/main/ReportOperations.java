@@ -1,5 +1,6 @@
 package com.amalitech.main;
 
+import com.amalitech.constants.TransactionType;
 import com.amalitech.exceptions.AccountNotFoundException;
 import com.amalitech.exceptions.InvalidInputException;
 import com.amalitech.models.*;
@@ -78,7 +79,7 @@ public class ReportOperations {
                       t ->
                           new String[] {
                             t.getTransactionId(),
-                            t.getType(),
+                            t.getType().toString(),
                             formatAmount(t.getType(), t.getAmount()),
                             t.getTimestamp()
                           })
@@ -86,8 +87,8 @@ public class ReportOperations {
     }
   }
 
-  private static String formatAmount(String type, double amount) {
-    boolean isCredit = type.equalsIgnoreCase("DEPOSIT") || type.equalsIgnoreCase("TRANSFER_IN");
+  private static String formatAmount(TransactionType type, double amount) {
+    boolean isCredit = type == TransactionType.DEPOSIT || type == TransactionType.TRANSFER_IN;
     String prefix = isCredit ? "+$" : "-$";
     return String.format("%s%.2f", prefix, amount);
   }

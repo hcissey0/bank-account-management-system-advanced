@@ -1,5 +1,6 @@
 package com.amalitech.main;
 
+import com.amalitech.constants.TransactionType;
 import com.amalitech.exceptions.AccountNotFoundException;
 import com.amalitech.exceptions.InvalidInputException;
 import com.amalitech.models.*;
@@ -148,9 +149,13 @@ public class TransactionOperations {
         // Record transactions
         Transaction debit =
             new Transaction(
-                fromAccount.getAccountNumber(), "TRANSFER_OUT", amount, fromAccount.getBalance());
+                fromAccount.getAccountNumber(),
+                TransactionType.TRANSFER_OUT,
+                amount,
+                fromAccount.getBalance());
         Transaction credit =
-            new Transaction(toAccountNumber, "TRANSFER_IN", amount, toAccount.getBalance());
+            new Transaction(
+                toAccountNumber, TransactionType.TRANSFER_IN, amount, toAccount.getBalance());
 
         transactionManager.addTransaction(debit);
         transactionManager.addTransaction(credit);
@@ -170,7 +175,8 @@ public class TransactionOperations {
   }
 
   private static Transaction buildTransaction(Account account, int transactionType, double amount) {
-    String type = transactionType == 1 ? "DEPOSIT" : "WITHDRAWAL";
+    TransactionType type =
+        transactionType == 1 ? TransactionType.DEPOSIT : TransactionType.WITHDRAWAL;
     double newBalance =
         transactionType == 1 ? account.getBalance() + amount : account.getBalance() - amount;
     return new Transaction(account.getAccountNumber(), type, amount, newBalance);

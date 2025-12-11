@@ -1,5 +1,7 @@
 package com.amalitech.models;
 
+import com.amalitech.constants.CustomerType;
+
 /** Abstract base class representing a bank customer with personal details. */
 public abstract class Customer {
   private static int customerCounter = 0;
@@ -82,5 +84,5 @@ public abstract class Customer {
   public abstract void displayCustomerDetails();
 
   /** Returns the type of customer (e.g., "Regular" or "Premium"). */
-  public abstract String getCustomerType();
+  public abstract CustomerType getCustomerType();
 }

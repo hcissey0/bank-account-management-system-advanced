@@ -1,5 +1,6 @@
 package com.amalitech.services;
 
+import com.amalitech.constants.AccountType;
 import com.amalitech.exceptions.AccountNotFoundException;
 import com.amalitech.models.*;
 import com.amalitech.utils.ConsoleTablePrinter;
@@ -37,11 +38,15 @@ public class AccountManager {
   }
 
   public long getSavingsAccountCount() {
-    return accounts.values().stream().filter(a -> a.getAccountType().equals("Savings")).count();
+    return accounts.values().stream()
+        .filter(a -> a.getAccountType() == AccountType.SAVINGS)
+        .count();
   }
 
   public long getCheckingAccountCount() {
-    return accounts.values().stream().filter(a -> a.getAccountType().equals("Checking")).count();
+    return accounts.values().stream()
+        .filter(a -> a.getAccountType() == AccountType.CHECKING)
+        .count();
   }
 
   public void addAccount(Account account) {
@@ -156,7 +161,7 @@ public class AccountManager {
     } else if (acc instanceof SavingsAccount savingsAccount) {
       return acc.getAccountType() + " (Min Balance: $" + savingsAccount.getMinimumBalance() + ")";
     }
-    return acc.getAccountType();
+    return acc.getAccountType().toString();
   }
 
   public double getTotalBalance() {

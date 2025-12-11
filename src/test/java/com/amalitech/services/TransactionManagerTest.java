@@ -2,6 +2,7 @@ package com.amalitech.services;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.amalitech.constants.TransactionType;
 import com.amalitech.models.*;
 import com.amalitech.utils.InputReader;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,7 +22,7 @@ class TransactionManagerTest {
 
   @Test
   void testAddTransaction() {
-    Transaction transaction = new Transaction("ACC001", "DEPOSIT", 100.0, 100.0);
+    Transaction transaction = new Transaction("ACC001", TransactionType.DEPOSIT, 100.0, 100.0);
     transactionManager.addTransaction(transaction);
     assertEquals(1, transactionManager.getTransactionCount());
   }
@@ -34,18 +35,24 @@ class TransactionManagerTest {
 
   @Test
   void testCalculateTotalDeposits() {
-    transactionManager.addTransaction(new Transaction("ACC001", "DEPOSIT", 100.0, 100.0));
-    transactionManager.addTransaction(new Transaction("ACC001", "DEPOSIT", 50.0, 150.0));
-    transactionManager.addTransaction(new Transaction("ACC001", "WITHDRAWAL", 30.0, 120.0));
+    transactionManager.addTransaction(
+        new Transaction("ACC001", TransactionType.DEPOSIT, 100.0, 100.0));
+    transactionManager.addTransaction(
+        new Transaction("ACC001", TransactionType.DEPOSIT, 50.0, 150.0));
+    transactionManager.addTransaction(
+        new Transaction("ACC001", TransactionType.WITHDRAWAL, 30.0, 120.0));
 
     assertEquals(150.0, transactionManager.calculateTotalDeposits());
   }
 
   @Test
   void testCalculateTotalWithdrawals() {
-    transactionManager.addTransaction(new Transaction("ACC001", "DEPOSIT", 100.0, 100.0));
-    transactionManager.addTransaction(new Transaction("ACC001", "WITHDRAWAL", 20.0, 80.0));
-    transactionManager.addTransaction(new Transaction("ACC001", "WITHDRAWAL", 30.0, 50.0));
+    transactionManager.addTransaction(
+        new Transaction("ACC001", TransactionType.DEPOSIT, 100.0, 100.0));
+    transactionManager.addTransaction(
+        new Transaction("ACC001", TransactionType.WITHDRAWAL, 20.0, 80.0));
+    transactionManager.addTransaction(
+        new Transaction("ACC001", TransactionType.WITHDRAWAL, 30.0, 50.0));
 
     assertEquals(50.0, transactionManager.calculateTotalWithdrawals());
   }
@@ -55,27 +62,29 @@ class TransactionManagerTest {
     // With ArrayList, there's no fixed capacity limit
     // Verify we can add more than the old array limit of 200
     for (int i = 0; i < 200; i++) {
-      transactionManager.addTransaction(new Transaction("ACC001", "DEPOSIT", 1.0, 1.0));
+      transactionManager.addTransaction(
+          new Transaction("ACC001", TransactionType.DEPOSIT, 1.0, 1.0));
     }
     assertEquals(200, transactionManager.getTransactionCount());
 
     // Add one more - should succeed with ArrayList
-    transactionManager.addTransaction(new Transaction("ACC001", "DEPOSIT", 1.0, 1.0));
+    transactionManager.addTransaction(new Transaction("ACC001", TransactionType.DEPOSIT, 1.0, 1.0));
     assertEquals(201, transactionManager.getTransactionCount());
   }
 
   @Test
   void testGetTransactionCount() {
     assertEquals(0, transactionManager.getTransactionCount());
-    transactionManager.addTransaction(new Transaction("ACC001", "DEPOSIT", 100.0, 100.0));
+    transactionManager.addTransaction(
+        new Transaction("ACC001", TransactionType.DEPOSIT, 100.0, 100.0));
     assertEquals(1, transactionManager.getTransactionCount());
   }
 
   @Test
   void testViewAllTransactions() {
     // Since viewAllTransactions prints to console, we can only ensure no exceptions are thrown
-    Transaction transaction1 = new Transaction("ACC001", "DEPOSIT", 100.0, 100.0);
-    Transaction transaction2 = new Transaction("ACC002", "WITHDRAWAL", 50.0, 50.0);
+    Transaction transaction1 = new Transaction("ACC001", TransactionType.DEPOSIT, 100.0, 100.0);
+    Transaction transaction2 = new Transaction("ACC002", TransactionType.WITHDRAWAL, 50.0, 50.0);
     transactionManager.addTransaction(transaction1);
     transactionManager.addTransaction(transaction2);
 
@@ -137,8 +146,8 @@ class TransactionManagerTest {
 
   @Test
   void testViewTransactionsByAccount() {
-    Transaction transaction1 = new Transaction("ACC001", "DEPOSIT", 100.0, 100.0);
-    Transaction transaction2 = new Transaction("ACC002", "WITHDRAWAL", 50.0, 50.0);
+    Transaction transaction1 = new Transaction("ACC001", TransactionType.DEPOSIT, 100.0, 100.0);
+    Transaction transaction2 = new Transaction("ACC002", TransactionType.WITHDRAWAL, 50.0, 50.0);
     transactionManager.addTransaction(transaction1);
     transactionManager.addTransaction(transaction2);
     assertDoesNotThrow(
@@ -199,8 +208,8 @@ class TransactionManagerTest {
 
   @Test
   void testGetTransactionsForAccount() {
-    Transaction transaction1 = new Transaction("ACC001", "DEPOSIT", 100.0, 100.0);
-    Transaction transaction2 = new Transaction("ACC002", "WITHDRAWAL", 50.0, 50.0);
+    Transaction transaction1 = new Transaction("ACC001", TransactionType.DEPOSIT, 100.0, 100.0);
+    Transaction transaction2 = new Transaction("ACC002", TransactionType.WITHDRAWAL, 50.0, 50.0);
     transactionManager.addTransaction(transaction1);
     transactionManager.addTransaction(transaction2);
 
@@ -209,18 +218,24 @@ class TransactionManagerTest {
 
   @Test
   void testGetTotalDepositsForAccount() {
-    transactionManager.addTransaction(new Transaction("ACC001", "DEPOSIT", 100.0, 100.0));
-    transactionManager.addTransaction(new Transaction("ACC001", "DEPOSIT", 50.0, 150.0));
-    transactionManager.addTransaction(new Transaction("ACC001", "WITHDRAWAL", 30.0, 120.0));
+    transactionManager.addTransaction(
+        new Transaction("ACC001", TransactionType.DEPOSIT, 100.0, 100.0));
+    transactionManager.addTransaction(
+        new Transaction("ACC001", TransactionType.DEPOSIT, 50.0, 150.0));
+    transactionManager.addTransaction(
+        new Transaction("ACC001", TransactionType.WITHDRAWAL, 30.0, 120.0));
 
     assertEquals(150.0, transactionManager.getTotalDeposits("ACC001"));
   }
 
   @Test
   void getTotalWithdrawalsForAccount() {
-    transactionManager.addTransaction(new Transaction("ACC001", "DEPOSIT", 100.0, 100.0));
-    transactionManager.addTransaction(new Transaction("ACC001", "WITHDRAWAL", 20.0, 80.0));
-    transactionManager.addTransaction(new Transaction("ACC001", "WITHDRAWAL", 30.0, 50.0));
+    transactionManager.addTransaction(
+        new Transaction("ACC001", TransactionType.DEPOSIT, 100.0, 100.0));
+    transactionManager.addTransaction(
+        new Transaction("ACC001", TransactionType.WITHDRAWAL, 20.0, 80.0));
+    transactionManager.addTransaction(
+        new Transaction("ACC001", TransactionType.WITHDRAWAL, 30.0, 50.0));
 
     assertEquals(50.0, transactionManager.getTotalWithdrawals("ACC001"));
   }

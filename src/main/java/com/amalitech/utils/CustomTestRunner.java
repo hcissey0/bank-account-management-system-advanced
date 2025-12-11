@@ -21,8 +21,8 @@ public class CustomTestRunner {
         LauncherDiscoveryRequestBuilder.request()
             .selectors(
                 selectPackage("com.amalitech.models"),
-                selectPackage("com.amalitech.customers"),
-                selectPackage("com.amalitech.transactions"))
+                selectPackage("com.amalitech.services"),
+                selectPackage("com.amalitech.utils"))
             .build();
 
     SummaryGeneratingListener summaryListener = new SummaryGeneratingListener();

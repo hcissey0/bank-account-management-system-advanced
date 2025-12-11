@@ -1,5 +1,6 @@
 package com.amalitech.models;
 
+import com.amalitech.constants.TransactionType;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -10,7 +11,7 @@ public class Transaction {
 
   private final String transactionId;
   private final String accountNumber;
-  private final String type;
+  private final TransactionType type;
   private final double amount;
   private final double balanceAfter;
   private final String timestamp;
@@ -19,12 +20,12 @@ public class Transaction {
    * Creates a new transaction record.
    *
    * @param accountNumber the account associated with the transaction
-   * @param type the transaction type ("DEPOSIT" or "WITHDRAWAL")
+   * @param type the transaction type
    * @param amount the transaction amount
    * @param balanceAfterTransaction the account balance after this transaction
    */
   public Transaction(
-      String accountNumber, String type, double amount, double balanceAfterTransaction) {
+      String accountNumber, TransactionType type, double amount, double balanceAfterTransaction) {
     this.transactionId = generateTransactionId();
     this.accountNumber = accountNumber;
     this.type = type;
@@ -40,7 +41,7 @@ public class Transaction {
    *
    * @param transactionId the transaction ID
    * @param accountNumber the account associated with the transaction
-   * @param type the transaction type ("DEPOSIT" or "WITHDRAWAL")
+   * @param type the transaction type
    * @param amount the transaction amount
    * @param balanceAfterTransaction the account balance after this transaction
    * @param timestamp the transaction timestamp
@@ -48,7 +49,7 @@ public class Transaction {
   public Transaction(
       String transactionId,
       String accountNumber,
-      String type,
+      TransactionType type,
       double amount,
       double balanceAfterTransaction,
       String timestamp) {
@@ -93,7 +94,7 @@ public class Transaction {
     return transactionId;
   }
 
-  public String getType() {
+  public TransactionType getType() {
     return type;
   }
 }

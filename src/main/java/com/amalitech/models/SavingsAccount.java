@@ -1,5 +1,6 @@
 package com.amalitech.models;
 
+import com.amalitech.constants.AccountType;
 import com.amalitech.exceptions.InsufficientFundsException;
 import com.amalitech.exceptions.InvalidAmountException;
 import com.amalitech.utils.ValidationUtils;
@@ -12,7 +13,7 @@ public class SavingsAccount extends Account {
 
   private static final double INTEREST_RATE = 3.5;
   private static final double MINIMUM_BALANCE = 500.0;
-  private static final String ACCOUNT_TYPE = "Savings";
+  private static final AccountType ACCOUNT_TYPE = AccountType.SAVINGS;
 
   public SavingsAccount(Customer customer, double initialDeposit) {
     super(customer);
@@ -61,7 +62,7 @@ public class SavingsAccount extends Account {
   }
 
   @java.lang.Override
-  public String getAccountType() {
+  public AccountType getAccountType() {
     return ACCOUNT_TYPE;
   }
 

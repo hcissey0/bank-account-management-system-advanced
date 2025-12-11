@@ -1,10 +1,12 @@
 package com.amalitech.models;
 
+import com.amalitech.constants.CustomerType;
+
 /** Represents a premium bank customer with waived fees and minimum balance requirements. */
 public class PremiumCustomer extends Customer {
 
   private final double minimumBalance;
-  private static final String CUSTOMER_TYPE = "Premium";
+  private static final CustomerType CUSTOMER_TYPE = CustomerType.PREMIUM;
   private static final double MINIMUM_BALANCE = 10_000.0;
 
   public PremiumCustomer(String name, int age, String contact, String address, String email) {
@@ -57,7 +59,7 @@ public class PremiumCustomer extends Customer {
   }
 
   @java.lang.Override
-  public String getCustomerType() {
+  public CustomerType getCustomerType() {
     return CUSTOMER_TYPE;
   }
 }

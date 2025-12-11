@@ -79,7 +79,7 @@ public class CustomerManager {
                 new String[] {
                   customer.getCustomerId(),
                   customer.getName(),
-                  customer.getCustomerType(),
+                  customer.getCustomerType().toString(),
                   String.valueOf(customer.getAge()),
                   customer.getContact(),
                   customer.getAddress()
@@ -92,11 +92,11 @@ public class CustomerManager {
   }
 
   public long getRegularCustomerCount() {
-    return customers.values().stream().filter(c -> c instanceof RegularCustomer).count();
+    return customers.values().stream().filter(RegularCustomer.class::isInstance).count();
   }
 
   public long getPremiumCustomerCount() {
-    return customers.values().stream().filter(c -> c instanceof PremiumCustomer).count();
+    return customers.values().stream().filter(PremiumCustomer.class::isInstance).count();
   }
 
   /** Saves all customers to file. */
