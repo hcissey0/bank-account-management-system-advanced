@@ -11,6 +11,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /** Manages a collection of transactions using ArrayList with file persistence. */
 public class TransactionManager {
@@ -42,6 +44,19 @@ public class TransactionManager {
       return;
     }
     transactions.add(transaction);
+  }
+
+  /**
+   * Searches for transactions matching the given criteria.
+   *
+   * @param predicate The filtering criteria.
+   * @return A list of matching transactions.
+   */
+  public List<Transaction> searchTransactions(Predicate<Transaction> predicate) {
+    return transactions.stream()
+        .filter(predicate)
+        .sorted(Comparator.comparing(Transaction::getTimestamp).reversed())
+        .collect(Collectors.toList());
   }
 
   /** Calculates the total amount of all deposits using Stream API. */
