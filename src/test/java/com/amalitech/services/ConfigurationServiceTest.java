@@ -27,6 +27,12 @@ class ConfigurationServiceTest {
   }
 
   @Test
+  void testConstructor() {
+    ConfigurationService configurationService = new ConfigurationService();
+    assertNotNull(configurationService, "ConfigurationService instance should not be null");
+  }
+
+  @Test
   void testDefaultValues() {
     // When file doesn't exist, defaults should be true
     assertTrue(configService.isAutoSave(), "AutoSave should be true by default");

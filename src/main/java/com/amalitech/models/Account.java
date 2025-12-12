@@ -2,7 +2,9 @@ package com.amalitech.models;
 
 import com.amalitech.constants.AccountType;
 import com.amalitech.constants.TransactionType;
+import com.amalitech.exceptions.InsufficientFundsException;
 import com.amalitech.exceptions.InvalidAmountException;
+import com.amalitech.exceptions.OverdraftLimitExceededException;
 import com.amalitech.utils.ValidationUtils;
 
 /**
@@ -77,7 +79,7 @@ public abstract class Account implements Transactable {
     return this.balance;
   }
 
-  public abstract double withdraw(double amount) throws Exception;
+  public abstract double withdraw(double amount) throws InsufficientFundsException, InvalidAmountException, OverdraftLimitExceededException;
 
   /**
    * Processes a deposit or withdrawal transaction after validation.
@@ -87,7 +89,7 @@ public abstract class Account implements Transactable {
    * @throws Exception if validation fails or type is invalid
    */
   @Override
-  public double processTransaction(double amount, TransactionType type) throws Exception {
+  public double processTransaction(double amount, TransactionType type) throws InsufficientFundsException, InvalidAmountException, OverdraftLimitExceededException, IllegalArgumentException {
     if (type == TransactionType.DEPOSIT) return this.deposit(amount);
     else if (type == TransactionType.WITHDRAWAL) return this.withdraw(amount);
     throw new IllegalArgumentException("Invalid transaction type: " + type);

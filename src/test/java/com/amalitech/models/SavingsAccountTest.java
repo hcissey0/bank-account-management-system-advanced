@@ -28,6 +28,15 @@ class SavingsAccountTest {
   }
 
   @Test
+  void testInitialDepositNegative() {
+    Exception exception =
+        assertThrows(
+            IllegalArgumentException.class,
+            () -> new SavingsAccount(customer, -100.0));
+    assertEquals("Initial deposit must be positive", exception.getMessage());
+  }
+
+  @Test
   void testGetInterestRate() {
     assertEquals(3.5, savingsAccount.getInterestRate());
   }

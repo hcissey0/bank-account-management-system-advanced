@@ -62,6 +62,86 @@ class AccountManagerTest {
   }
 
   @Test
+  void testLoadAccountsEmpty() throws IOException {
+    accountManager.loadAccounts();
+    assertEquals(0, accountManager.getAccountCount());
+  }
+
+  @Test
+  void testLoadAccountsWithData() throws IOException {
+    // Add an account and save
+    Account account = new CheckingAccount(customer, 500.0);
+    accountManager.addAccount(account);
+    accountManager.saveAccounts();
+
+    // Create a new AccountManager to load from file
+    AccountManager newAccountManager =
+        new AccountManager(customerManager, persistenceService);
+    newAccountManager.loadAccounts();
+
+    assertEquals(1, newAccountManager.getAccountCount());
+    Account loadedAccount;
+    try {
+      loadedAccount = newAccountManager.findAccount(account.getAccountNumber());
+      assertEquals(account.getAccountNumber(), loadedAccount.getAccountNumber());
+      assertEquals(account.getBalance(), loadedAccount.getBalance());
+    } catch (AccountNotFoundException e) {
+      e.printStackTrace();
+    }
+  }
+
+  @Test
+  void testGetSavingsAccountCount() {
+    accountManager.addAccount(new SavingsAccount(customer, 200.0));
+    accountManager.addAccount(new CheckingAccount(customer, 300.0));
+    accountManager.addAccount(new SavingsAccount(customer, 400.0));
+    assertEquals(2, accountManager.getSavingsAccountCount());
+  }
+
+  @Test
+  void testGetCheckingAccountCount() {
+    accountManager.addAccount(new SavingsAccount(customer, 200.0));
+    accountManager.addAccount(new CheckingAccount(customer, 300.0));
+    accountManager.addAccount(new CheckingAccount(customer, 400.0));
+    assertEquals(2, accountManager.getCheckingAccountCount());
+  }
+
+  @Test
+  void testAddAccountNull() {
+    accountManager.addAccount(null);
+    assertEquals(0, accountManager.getAccountCount());
+  }
+
+  @Test
+  void testViewAllAccountsEmpty() {
+    // Since viewAllAccounts prints to console, we will just ensure no exceptions are thrown
+    assertDoesNotThrow(
+        () ->
+            accountManager.viewAllAccounts(
+                new InputReader() {
+                  @Override
+                  public String readString(String prompt) {
+                    return "";
+                  }
+
+                  @Override
+                  public int readInt(String prompt, int min, int max) {
+                    return 0;
+                  }
+
+                  @Override
+                  public double readDouble(String prompt, double min) {
+                    return 0;
+                  }
+
+                  @Override
+                  public void waitForEnter() {
+                    // Do nothing for test
+                  }
+                }));
+  }
+
+  @Test
   void testGetAccountCountInitiallyZero() {
     assertEquals(0, accountManager.getAccountCount());
   }

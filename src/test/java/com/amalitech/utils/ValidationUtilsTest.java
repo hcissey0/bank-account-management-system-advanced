@@ -26,6 +26,15 @@ class ValidationUtilsTest {
         "Email should be invalid: " + email);
   }
 
+  // test null email
+  @Test
+  void testNullEmail() {
+    assertThrows(
+        InvalidInputException.class,
+        () -> ValidationUtils.validateEmail(null),
+        "Email should be invalid: null");
+  }
+
   @ParameterizedTest
   @ValueSource(strings = {"ACC001", "ACC123", "ACC999"})
   void testValidAccountNumbers(String accNum) {
@@ -41,6 +50,15 @@ class ValidationUtilsTest {
         InvalidInputException.class,
         () -> ValidationUtils.validateAccountNumber(accNum),
         "Account number should be invalid: " + accNum);
+  }
+
+  // test null account number
+  @Test
+  void testNullAccountNumber() {
+    assertThrows(
+        InvalidInputException.class,
+        () -> ValidationUtils.validateAccountNumber(null),
+        "Account number should be invalid: null");
   }
 
   @ParameterizedTest
