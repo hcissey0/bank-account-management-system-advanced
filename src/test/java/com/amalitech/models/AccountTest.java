@@ -4,7 +4,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.amalitech.constants.AccountType;
 import com.amalitech.constants.TransactionType;
+import com.amalitech.exceptions.InsufficientFundsException;
 import com.amalitech.exceptions.InvalidAmountException;
+import com.amalitech.exceptions.OverdraftLimitExceededException;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -30,7 +33,7 @@ class AccountTest {
     }
 
     @Override
-    public double withdraw(double amount) throws Exception {
+    public double withdraw(double amount) throws InsufficientFundsException, InvalidAmountException, OverdraftLimitExceededException {
       if (amount > getBalance()) {
         throw new InvalidAmountException("Insufficient funds");
       }
@@ -61,7 +64,7 @@ class AccountTest {
   }
 
   @Test
-  void testWithdraw() throws Exception {
+  void testWithdraw() throws InsufficientFundsException, InvalidAmountException, OverdraftLimitExceededException {
     account.deposit(100.0);
     account.withdraw(50.0);
     assertEquals(50.0, account.getBalance());
@@ -74,7 +77,7 @@ class AccountTest {
   }
 
   @Test
-  void testProcessTransactionWithdrawal() throws Exception {
+  void testProcessTransactionWithdrawal() throws InsufficientFundsException, InvalidAmountException, OverdraftLimitExceededException {
     account.deposit(100.0);
     account.processTransaction(50.0, TransactionType.WITHDRAWAL);
     assertEquals(50.0, account.getBalance());

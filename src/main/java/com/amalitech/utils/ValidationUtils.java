@@ -12,7 +12,7 @@ public class ValidationUtils {
 
   // Regex Patterns
   private static final String EMAIL_REGEX =
-      "^[A-Za-z0-9+_.-]+@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*\\.[A-Za-z]{2,}$";
+      "^[A-Za-z0-9+_.-]+@(?:[A-Za-z0-9-]+\\.)++[A-Za-z]{2,}$";
   private static final String ACCOUNT_NUMBER_REGEX = "^ACC\\d{3}$";
   private static final String CUSTOMER_ID_REGEX = "^CUS\\d{3}$";
   private static final String NAME_REGEX = "^[A-Za-z\\s]+$";

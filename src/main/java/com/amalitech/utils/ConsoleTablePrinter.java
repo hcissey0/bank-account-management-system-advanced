@@ -74,7 +74,8 @@ public class ConsoleTablePrinter implements TablePrinter {
     for (int i = 0; i < colWidths.length; i++) {
       sb.append("| ");
       String cell = (i < row.length && row[i] != null) ? row[i] : "";
-      sb.append(String.format("%-" + (colWidths[i] + 1) + "s", cell));
+      sb.append(cell);
+      sb.append(" ".repeat(colWidths[i] + 1 - cell.length()));
     }
     sb.append("|");
     System.out.println(sb.toString());

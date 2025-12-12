@@ -48,6 +48,82 @@ class CustomerManagerTest {
   }
 
   @Test
+  void testLoadCustomersEmptyFile() {
+    // When file is empty, customer count should be zero
+    customerManager.loadCustomers();
+    assertEquals(0, customerManager.getCustomerCount());
+  }
+
+  @Test
+  void testAddCustomerNull() {
+    customerManager.addCustomer(null);
+    assertEquals(0, customerManager.getCustomerCount());
+  }
+
+  @Test
+  void testViewAllCustomersEmpty() {
+    // Since viewAllCustomers prints to console, we can only ensure no exceptions are thrown
+    assertDoesNotThrow(
+        () ->
+            customerManager.viewAllCustomers(
+                new InputReader() {
+                  @Override
+                  public String readString(String prompt) {
+                    return null;
+                  }
+
+                  @Override
+                  public int readInt(String prompt, int min, int max) {
+                    return 0;
+                  }
+
+                  @Override
+                  public double readDouble(String prompt, double min) {
+                    return 0;
+                  }
+
+                  @Override
+                  public void waitForEnter() {
+                    // No-op for testing
+                  }
+                }));
+  }
+
+  @Test
+  void testGetRegularCustomerCount() {
+    Customer customer1 =
+        new RegularCustomer("Alice", 28, "555-1234", "123 Main St", "alice@example.com");
+    Customer customer2 =
+        new PremiumCustomer("Bob", 35, "555-5678", "456 Oak Ave", "bob@example.com");
+    customerManager.addCustomer(customer1);
+    customerManager.addCustomer(customer2);
+    assertEquals(1, customerManager.getRegularCustomerCount());
+  }
+
+  @Test
+  void testGetPremiumCustomerCount() {
+    Customer customer1 =
+        new RegularCustomer("Alice", 28, "555-1234", "123 Main St", "alice@example.com");
+    Customer customer2 =
+        new PremiumCustomer("Bob", 35, "555-5678", "456 Oak Ave", "bob@example.com");
+    customerManager.addCustomer(customer1);
+    customerManager.addCustomer(customer2);
+    assertEquals(1, customerManager.getPremiumCustomerCount());
+  }
+
+  @Test
+  void testSaveCustomers() {
+    Customer customer =
+        new RegularCustomer("Charlie", 30, "555-9999", "101 Maple Dr", "charlie@example.com");
+    customerManager.addCustomer(customer);
+    customerManager.saveCustomers();
+    // Reload customers to verify save
+    CustomerManager newManager = new CustomerManager(persistenceService);
+    newManager.loadCustomers();
+    assertEquals(1, newManager.getCustomerCount());
+  }
+
+  @Test
   void testAddCustomer() {
     Customer customer =
         new RegularCustomer("Charlie", 30, "555-9999", "101 Maple Dr", "charlie@example.com");
@@ -73,7 +149,7 @@ class CustomerManagerTest {
   }
 
   @Test
-  void testViewAllCustomersEmpty() {
+  void testViewAllCustomers() {
     // Since viewAllCustomers prints to console, we can only ensure no exceptions are thrown
     Customer customer =
         new RegularCustomer("Alice", 28, "555-1234", "123 Main St", "alice@example.com");
