@@ -5,8 +5,14 @@ import com.amalitech.exceptions.AccountNotFoundException;
 import com.amalitech.exceptions.InvalidInputException;
 import com.amalitech.models.*;
 import com.amalitech.services.*;
+import com.amalitech.utils.ConsoleTablePrinter;
 import com.amalitech.utils.InputReader;
 import com.amalitech.utils.ValidationUtils;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.function.Predicate;
 
 /** Handles all transaction-related operations. */
 public class TransactionOperations {
@@ -85,6 +91,120 @@ public class TransactionOperations {
       System.out.println(e.getMessage());
       inputReader.waitForEnter();
     }
+  }
+
+  public static void searchTransactions(
+      TransactionManager transactionManager, InputReader inputReader) {
+    System.out.println("\n+--------------------+\n| SEARCH TRANSACTIONS |\n+--------------------+");
+
+    Predicate<Transaction> predicate = t -> true;
+
+    predicate = predicate.and(getAccountNumberFilter(inputReader));
+    predicate = predicate.and(getTransactionTypeFilter(inputReader));
+    predicate = predicate.and(getAmountRangeFilter(inputReader));
+    predicate = predicate.and(getDateRangeFilter(inputReader));
+
+    List<Transaction> results = transactionManager.searchTransactions(predicate);
+    displaySearchResults(results);
+    inputReader.waitForEnter();
+  }
+
+  private static Predicate<Transaction> getAccountNumberFilter(InputReader inputReader) {
+    if (!promptYesNo(inputReader, "Filter by Account Number?")) {
+      return t -> true;
+    }
+    String tempAccountNumber;
+    while (true) {
+      tempAccountNumber = inputReader.readString("Enter Account Number: ");
+      try {
+        ValidationUtils.validateAccountNumber(tempAccountNumber);
+        break;
+      } catch (InvalidInputException e) {
+        System.out.println(e.getMessage());
+      }
+    }
+    String accountNumber = tempAccountNumber;
+    return t -> t.getAccountNumber().equals(accountNumber);
+  }
+
+  private static Predicate<Transaction> getTransactionTypeFilter(InputReader inputReader) {
+    if (!promptYesNo(inputReader, "Filter by Transaction Type?")) {
+      return t -> true;
+    }
+    System.out.println("1. DEPOSIT\n2. WITHDRAWAL\n3. TRANSFER_IN\n4. TRANSFER_OUT");
+    int typeChoice = inputReader.readInt("Select Type (1-4): ", 1, 4);
+    TransactionType type =
+        switch (typeChoice) {
+          case 1 -> TransactionType.DEPOSIT;
+          case 2 -> TransactionType.WITHDRAWAL;
+          case 3 -> TransactionType.TRANSFER_IN;
+          case 4 -> TransactionType.TRANSFER_OUT;
+          default -> null;
+        };
+    return type != null ? t -> t.getType() == type : t -> true;
+  }
+
+  private static Predicate<Transaction> getAmountRangeFilter(InputReader inputReader) {
+    if (!promptYesNo(inputReader, "Filter by Amount Range?")) {
+      return t -> true;
+    }
+    double min = inputReader.readDouble("Enter Min Amount (0 for no min): ", 0);
+    double max = inputReader.readDouble("Enter Max Amount (0 for no max): ", 0);
+
+    Predicate<Transaction> p = t -> true;
+    if (min > 0) {
+      double finalMin = min;
+      p = p.and(t -> t.getAmount() >= finalMin);
+    }
+    if (max > 0) {
+      double finalMax = max;
+      p = p.and(t -> t.getAmount() <= finalMax);
+    }
+    return p;
+  }
+
+  private static Predicate<Transaction> getDateRangeFilter(InputReader inputReader) {
+    if (!promptYesNo(inputReader, "Filter by Date Range (Last N days)?")) {
+      return t -> true;
+    }
+    int days = inputReader.readInt("Enter number of days (e.g., 7 for last week): ", 1, 3650);
+    LocalDate cutoffDate = LocalDate.now().minusDays(days);
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+
+    return t -> {
+      try {
+        LocalDateTime txnTime = LocalDateTime.parse(t.getTimestamp(), formatter);
+        return txnTime.toLocalDate().isAfter(cutoffDate.minusDays(1));
+      } catch (Exception e) {
+        return false;
+      }
+    };
+  }
+
+  private static void displaySearchResults(List<Transaction> results) {
+    System.out.println("\n--- Search Results (" + results.size() + ") ---");
+    if (results.isEmpty()) {
+      System.out.println("No transactions found matching criteria.");
+    } else {
+      new ConsoleTablePrinter()
+          .printTable(
+              new String[] {"ID", "ACCOUNT", "TYPE", "AMOUNT", "DATE"},
+              results.stream()
+                  .map(
+                      t ->
+                          new String[] {
+                            t.getTransactionId(),
+                            t.getAccountNumber(),
+                            t.getType().toString(),
+                            String.format("$%.2f", t.getAmount()),
+                            t.getTimestamp()
+                          })
+                  .toArray(String[][]::new));
+    }
+  }
+
+  private static boolean promptYesNo(InputReader inputReader, String prompt) {
+    return inputReader.readString(prompt + " (y/n): ").toLowerCase().startsWith("y");
   }
 
   private static void handleTransaction(
